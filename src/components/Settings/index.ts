@@ -1,4 +1,4 @@
-import Default from "./Modal";
+import Default from "./Modal.astro";
 
 export default {
   Default,

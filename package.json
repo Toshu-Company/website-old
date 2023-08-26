@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^2.3.2",
+    "@nanostores/persistent": "^0.9.1",
     "@nanostores/react": "^0.7.1",
     "astro": "^2.10.13",
     "nanostores": "^0.9.3",

@@ -1,14 +1,13 @@
 import { styled } from "styled-components";
 import { useState } from "react";
-import type { WritableAtom } from "nanostores";
-import { $setting, Setting } from "../../store/setting";
+import { $setting, RawSetting } from "../../store/setting";
 
 type Props = {
   id?: string;
   label: string;
   checked?: boolean;
   onChange?: (isOn: boolean) => void;
-  $key?: keyof Setting;
+  $key?: keyof RawSetting;
 };
 
 export default function Toggle({ id, label, checked, onChange, $key }: Props) {

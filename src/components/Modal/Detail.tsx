@@ -25,7 +25,7 @@ export default function Detail({ close, id, detail }: Props) {
           <Video controls autoPlay loop autoFocus>
             <source
               src={
-                isSchool()
+                censored
                   ? "https://youtu.be/0bIRwBpBcZQ"
                   : Extended.isExtendedVideoDetail(detail)
                   ? detail.url
@@ -36,7 +36,9 @@ export default function Detail({ close, id, detail }: Props) {
           </Video>
           <TopRow>
             <User>
-              <a href={`/user/${detail.uploader_id}`}>{detail.uploader}</a>
+              <a href={`/twitter/user?user=${detail.uploader_id}`}>
+                {detail.uploader}
+              </a>
             </User>
             <Menu></Menu>
           </TopRow>
