@@ -6,11 +6,7 @@ import { TwiVideosNet } from "../../libs/api";
 import Content from "../../components/Content";
 
 export default function Index() {
-  const params =
-    URLSearchParams && window
-      ? new URLSearchParams(window.location.search)
-      : ({} as any);
-  const userId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const [search, setSearch] = useState<string>("");
 
   const [videos, setVideos] = useState<SearchResultVideo[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -23,12 +19,12 @@ export default function Index() {
 
   const fetch = useCallback(
     async (
-      userId: string | null,
+      search: string | null,
       page: number,
       videos: SearchResultVideo[]
     ) => {
-      if (userId) {
-        TwiVideosNet.getSearchUser(userId, page).then((res) => {
+      if (search) {
+        TwiVideosNet.getSearch(search, page).then((res) => {
           setVideos(videos.concat(res.videos));
         });
       } else {
@@ -41,7 +37,7 @@ export default function Index() {
   );
 
   const target = useRef(null);
-  const prevUserId = useRef<string | null>(null);
+  const prevSearch = useRef<string | null>(null);
 
   useEffect(() => {
     const targetNode = target.current;
@@ -53,15 +49,20 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
-    if (prevUserId.current !== userId) {
+    const params = new URLSearchParams(window.location.search);
+    setSearch(params.get("search") ?? "");
+  }, []);
+
+  useEffect(() => {
+    if (prevSearch.current !== search) {
       setPage(1);
-      prevUserId.current = userId;
-      fetch(userId, 1, []);
+      prevSearch.current = search;
+      fetch(search, 1, []);
     } else {
-      fetch(userId, page, videos);
+      fetch(search, page, videos);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, userId]);
+  }, [page, search]);
 
   return (
     <>

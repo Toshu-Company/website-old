@@ -1,7 +1,7 @@
 ---
-import Container from '../../components/Container';
-import Header from '../../components/Header';
-import '../../styles/globals.css'
+import Container from "../../components/Container.astro";
+import Header from "../../components/Header.astro";
+import "../../styles/globals.css";
 
 interface Props {
   title: string;
@@ -21,9 +21,7 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <Header client:load />
-    <Container client:load>
-        <slot />
-    </Container>
+    <Header />
+    <slot />
   </body>
 </html>

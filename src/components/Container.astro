@@ -1,0 +1,32 @@
+<div class="wrapper">
+  <div class="container">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .wrapper {
+    width: 100%;
+    padding-top: 60px;
+
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    width: 1300px;
+    height: 100%;
+
+    @media (max-width: 1300px) {
+      width: 1036px;
+    }
+
+    @media (max-width: 1036px) {
+      width: 772px;
+    }
+
+    @media (max-width: 772px) {
+      width: 85%;
+    }
+  }
+</style>

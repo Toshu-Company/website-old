@@ -1,8 +1,11 @@
 ---
+import Container from "../../components/Container.astro";
 import Layout from "../../layouts/twitter/Layout.astro";
-import Content from "./index";
+import Content from "./content";
 ---
 
 <Layout title="Welcome to Twitter." />
-    <Content client:only="react" />
+    <Container>
+        <Content client:only="react" />
+    </Container>
 </Layout>
