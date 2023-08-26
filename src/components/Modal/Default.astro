@@ -3,7 +3,7 @@ const { id } = Astro.props;
 ---
 
 <div class="wrapper">
-    <div class="container" id={`modal-${id}`} onclick="(e) => e.stopPropagation();">
+    <div class="container" id={`modal-${id}`} onclick="event.stopPropagation();">
         <slot />
     </div>
 </div>

@@ -1,3 +1,5 @@
+import { $setting } from "../store/setting";
+
 export function isSchool() {
-  return import.meta.env.PUBLIC_SCHOOL == "1";
+  return $setting.get().censored;
 }

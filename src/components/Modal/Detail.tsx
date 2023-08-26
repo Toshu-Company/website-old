@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 import Modal from ".";
 import { isSchool } from "../../libs/school";
 import { Extended, VideoDetail } from "../../libs/api/twi-videos.net";
+import { useState } from "react";
+import { $setting } from "../../store/setting";
 
 type Props = {
   close: () => void;
@@ -10,7 +12,11 @@ type Props = {
 };
 
 export default function Detail({ close, id, detail }: Props) {
-  console.log(id, detail);
+  const [censored, setCensored] = useState<boolean>(isSchool());
+
+  $setting.listen((setting) => {
+    setCensored(setting.censored);
+  });
 
   return (
     <>

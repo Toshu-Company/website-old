@@ -1,17 +1,35 @@
 ---
 import BaseModal from "../Modal/Default.astro";
+import Toggle from "./Toggle";
 
 export const MODAL_ID = "settings";
 ---
 
 <BaseModal id={MODAL_ID}>
     <div class="wrapper">
-        <h1>hello!</h1>
+        <!-- <div class="category">Category 1</div> -->
+        <Toggle label="Censored" $key="censored" client:only="react" />
+        <!-- <div class="splitter" />
+        <div class="category">Category 2</div>
+        <Toggle label="Toggle" client:only="react" /> -->
     </div>
 </BaseModal>
 <style>
     .wrapper {
         width: 100%;
         height: 100%;
+    }
+
+    .category {
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 16px;
+    }
+
+    .splitter {
+        width: 100%;
+        height: 1px;
+        background-color: #696969;
+        margin: 16px 0;
     }
 </style>

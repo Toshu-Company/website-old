@@ -5,6 +5,7 @@ import type { Extended, VideoDetail } from "../../libs/api/twi-videos.net";
 import { TwiVideosNet } from "../../libs/api";
 import { isSchool } from "../../libs/school";
 import Modal from "../Modal";
+import { $setting } from "../../store/setting";
 
 type Props = {
   videoId: string;
@@ -16,18 +17,23 @@ export default function Item(props: Props) {
     VideoDetail | Extended.VideoDetailExtend
   >();
   const [modal, setModal] = useState<boolean>(false);
+  const [censored, setCensored] = useState<boolean>(isSchool());
+
+  useEffect(() => {
+    $setting.listen((setting) => {
+      setCensored(setting.censored);
+    });
+  }, []);
 
   useEffect(() => {
     TwiVideosNet.getDetail(props.videoId).then((res) => setDetail(res));
   }, [props.videoId]);
 
-  console.log(detail);
-
   return (
     <>
       <Wrapper onClick={() => setModal(true)}>
         <ImageWrapper>
-          {isSchool() ? (
+          {censored ? (
             <RoundedImage
               src={
                 "https://cdn.pixabay.com/photo/2017/01/26/18/09/length-landscape-2011238_1280.jpg"

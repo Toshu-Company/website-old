@@ -1,18 +1,25 @@
 import { styled } from "styled-components";
 import { useState } from "react";
+import type { WritableAtom } from "nanostores";
+import { $setting, Setting } from "../../store/setting";
 
 type Props = {
+  id?: string;
   label: string;
   checked?: boolean;
   onChange?: (isOn: boolean) => void;
+  $key?: keyof Setting;
 };
 
-export default function Toggle({ label, checked, onChange }: Props) {
-  const [isOn, setIsOn] = useState(checked ?? false);
+export default function Toggle({ id, label, checked, onChange, $key }: Props) {
+  const [isOn, setIsOn] = useState(
+    ($key && $setting.get()[$key]) ?? checked ?? false
+  );
 
   const handleToggle = () => {
     setIsOn(!isOn);
     onChange?.(!isOn);
+    $key && $setting.setKey($key, !isOn);
   };
 
   return (
@@ -20,7 +27,7 @@ export default function Toggle({ label, checked, onChange }: Props) {
       <ToggleWrapper>
         <ToggleLabel>{label}</ToggleLabel>
         <ToggleSwitch onClick={handleToggle}>
-          <SwitchInput type="checkbox" checked={isOn} />
+          <SwitchInput id={id} type="checkbox" checked={isOn} readOnly />
           <SwitchSlider />
         </ToggleSwitch>
       </ToggleWrapper>
