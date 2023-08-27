@@ -1,21 +1,31 @@
 ---
+import type { ImageMetadata } from 'astro';
+
 import Image from './Image';
 
-import TwitterIcon from "../assets/twitter.svg";
 import SearchIcon from "../assets/search.svg";
 import SettingIcon from "../assets/setting.svg";
 import HeartIcon from "../assets/heart.svg";
 
 import Modal, { MODAL_ID } from './Settings/Modal.astro';
+
+interface Props {
+    icon: ImageMetadata;
+    name: string;
+}
+
+const rootpath = '/' + Astro.url.pathname.split('/')[1];
+
+const { icon, name } = Astro.props;
 ---
 
 <div class="wrapper">
     <div class="container">
-        <a href="/twitter">
+        <a href={rootpath}>
             <Image
-              src={TwitterIcon.src}
+              src={icon.src}
               width={[40, { responsive: 768, size: 32 }]}
-              alt="Twitter"
+              alt={name}
               responsive
               client:load
             />
@@ -44,7 +54,7 @@ import Modal, { MODAL_ID } from './Settings/Modal.astro';
                 client:idle
               />
             </button>
-            <a href="/twitter/favorites" class="button">
+            <a href={`${rootpath}/favorites`} class="button">
               <Image
                 src={HeartIcon.src}
                 width={[24, { responsive: 768, size: 20 }]}

@@ -18,26 +18,26 @@ export default function Index() {
   );
 
   const fetch = useCallback(
-    async (
-      search: string | null,
-      page: number,
-      videos: SearchResultVideo[]
-    ) => {
-      if (search) {
-        TwiVideosNet.getSearch(search, page).then((res) => {
-          setVideos(videos.concat(res.videos));
-        });
-      } else {
-        TwiVideosNet.getIndex(page).then((res) => {
-          setVideos(videos.concat(res.videos));
-        });
-      }
-    },
+    async (search: string | null, page: number, videos: SearchResultVideo[]) =>
+      new Promise((resolve) => {
+        if (search) {
+          TwiVideosNet.getSearch(search, page).then((res) => {
+            setVideos(videos.concat(res.videos));
+            resolve(videos.concat(res.videos));
+          });
+        } else {
+          TwiVideosNet.getIndex(page).then((res) => {
+            setVideos(videos.concat(res.videos));
+            resolve(videos.concat(res.videos));
+          });
+        }
+      }),
     []
   );
 
   const target = useRef(null);
   const prevSearch = useRef<string | null>(null);
+  const loading = useRef<boolean>(true);
 
   useEffect(() => {
     const targetNode = target.current;
@@ -57,9 +57,15 @@ export default function Index() {
     if (prevSearch.current !== search) {
       setPage(1);
       prevSearch.current = search;
-      fetch(search, 1, []);
+      fetch(search, 1, []).then(() => {
+        console.log("fetch");
+        loading.current = false;
+      });
     } else {
-      fetch(search, page, videos);
+      fetch(search, page, videos).then(() => {
+        console.log("fetch");
+        loading.current = false;
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search]);
@@ -68,8 +74,9 @@ export default function Index() {
     <>
       <Wrapper>
         <Content.Container>
-          {videos &&
-            videos.map((v, i) => <Content.Item key={i} videoId={v.id} />)}
+          {loading.current
+            ? [...Array(20)].map((_, i) => <Content.Skeleton key={i} />)
+            : videos.map((v, i) => <Content.Item key={i} videoId={v.id} />)}
           <Intersection
             id="intersection"
             ref={target}

@@ -1,4 +1,4 @@
-import { $setting } from "../store/setting";
+import { $setting } from "../store/twitter/setting";
 
 export function isSchool() {
   return $setting.get().censored;

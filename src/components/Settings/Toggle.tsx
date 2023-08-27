@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { useState } from "react";
-import { $setting, RawSetting } from "../../store/setting";
+import { $setting, RawSetting } from "../../store/twitter/setting";
 
 type Props = {
   id?: string;

@@ -1,17 +1,28 @@
 ---
+import { random } from "../../libs/random";
 import BaseModal from "../Modal/Default.astro";
 import Toggle from "./Toggle";
 
-export const MODAL_ID = "settings";
+// export const MODAL_ID = "settings";
+export const MODAL_ID = random();
 ---
 
 <BaseModal id={MODAL_ID}>
     <div class="wrapper">
-        <!-- <div class="category">Category 1</div> -->
-        <Toggle label="Censored" $key="censored" client:only="react" />
-        <!-- <div class="splitter" />
-        <div class="category">Category 2</div>
-        <Toggle label="Toggle" client:only="react" /> -->
+        <div class="category">Common</div>
+        <div class="toggle">
+            <Toggle label="Censored" $key="censored" client:only="react" />
+        </div>
+        <div class="splitter" />
+        <div class="category">Video</div>
+        <div class="group">
+            <div class="grow">
+                <Toggle label="Autoplay" $key="autoPlay" client:only="react" />
+            </div>
+            <div class="grow">
+                <Toggle label="Loop" $key="loop" client:only="react" />
+            </div>
+        </div>
     </div>
 </BaseModal>
 <style>
@@ -31,5 +42,26 @@ export const MODAL_ID = "settings";
         height: 1px;
         background-color: #696969;
         margin: 16px 0;
+    }
+
+    .group {
+        display: flex;
+
+        flex-direction: row;
+        
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 16px;
+
+        margin-bottom: 16px;
+    }
+
+    .grow {
+        flex: 1;
+    }
+
+    .toggle {
+        margin-bottom: 16px;
     }
 </style>

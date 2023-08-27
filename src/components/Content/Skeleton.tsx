@@ -1,60 +1,19 @@
 import { keyframes, styled } from "styled-components";
 import Image from "../Image";
-import { useEffect, useState } from "react";
-import type { Extended, VideoDetail } from "../../libs/api/twi-videos.net";
-import { TwiVideosNet } from "../../libs/api";
-import { isSchool } from "../../libs/school";
-import Modal from "../Modal";
-import { $setting } from "../../store/twitter/setting";
 import Loading from "../../assets/loading.jpg";
 
-type Props = {
-  videoId: string;
-  click?: () => void;
-};
-
-export default function Item(props: Props) {
-  const [detail, setDetail] = useState<
-    VideoDetail | Extended.VideoDetailExtend
-  >();
-  const [modal, setModal] = useState<boolean>(false);
-  const [censored, setCensored] = useState<boolean>(isSchool());
-
-  useEffect(() => {
-    $setting.listen((setting) => {
-      setCensored(setting.censored);
-    });
-  }, []);
-
-  useEffect(() => {
-    TwiVideosNet.getDetail(props.videoId).then((res) => setDetail(res));
-  }, [props.videoId]);
-
+export default function Skeleton() {
   return (
     <>
-      <Wrapper onClick={() => setModal(true)}>
+      <Wrapper>
         <ImageWrapper>
-          {censored ? (
-            <RoundedImage src={Loading.src} fill alt={"article"} />
-          ) : (
-            <RoundedImage
-              src={detail?.thumbnails[1].url ?? Loading.src}
-              fill
-              alt={"article"}
-            />
-          )}
+          {/* <RoundedImage src={Loading.src} fill alt={"article"} /> */}
+          <Gradient />
         </ImageWrapper>
         <TextWrapper>
-          <Text>{detail?.uploader}</Text>
+          <Text>Loading...</Text>
         </TextWrapper>
       </Wrapper>
-      {modal && detail && (
-        <Modal.Detail
-          close={() => setModal(false)}
-          id={props.videoId}
-          detail={detail}
-        />
-      )}
     </>
   );
 }
@@ -87,7 +46,7 @@ const Wrapper = styled.button`
     height: auto;
   }
 
-  /* animation: ${Animation} 0.5s ease-in-out; */
+  animation: ${Animation} 0.5s ease-in-out;
 
   &:hover {
     opacity: 0.8;
@@ -133,4 +92,10 @@ const Text = styled.p`
 
 const RoundedImage = styled(Image)`
   border-radius: 8px 8px 0 0;
+`;
+
+const Gradient = styled.div`
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(transparent, #000);
 `;
