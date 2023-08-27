@@ -7,6 +7,8 @@ import { isSchool } from "../../libs/school";
 import Modal from "../Modal";
 import { $setting } from "../../store/twitter/setting";
 import Loading from "../../assets/loading.jpg";
+import type { GetImageResult } from "astro";
+import AssetImage from "../AssetImage";
 
 type Props = {
   videoId: string;
@@ -45,7 +47,7 @@ export default function Item(props: Props) {
           )}
         </ImageWrapper>
         <TextWrapper>
-          <Text>{detail?.uploader}</Text>
+          <Text>{detail?.uploader ?? "\u00a0"}</Text>
         </TextWrapper>
       </Wrapper>
       {modal && detail && (
@@ -122,6 +124,7 @@ const TextWrapper = styled.div`
 `;
 
 const Text = styled.p`
+  min-height: 18px;
   font-size: 16px;
   font-weight: 500;
   color: #dbdbdb;
@@ -134,3 +137,7 @@ const Text = styled.p`
 const RoundedImage = styled(Image)`
   border-radius: 8px 8px 0 0;
 `;
+
+// const OptimizedRoundedImage = styled(AssetImage)`
+//   border-radius: 8px 8px 0 0;
+// `;

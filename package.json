@@ -14,9 +14,11 @@
     "@nanostores/persistent": "^0.9.1",
     "@nanostores/react": "^0.7.1",
     "astro": "^2.10.13",
+    "astro-compress": "^2.0.14",
     "nanostores": "^0.9.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "sharp": "^0.32.5",
     "styled-components": "^6.0.7"
   },
   "devDependencies": {

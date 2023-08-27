@@ -11,7 +11,7 @@ export default function Skeleton() {
           <Gradient />
         </ImageWrapper>
         <TextWrapper>
-          <Text>Loading...</Text>
+          <Text>&nbsp;</Text>
         </TextWrapper>
       </Wrapper>
     </>
