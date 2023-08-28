@@ -1,24 +1,52 @@
 import { styled } from "styled-components";
 import { useState } from "react";
-import { $setting, RawSetting } from "../../store/twitter/setting";
+import * as Twitter from "../../store/twitter/setting";
+import * as Hitomi from "../../store/hitomi/setting";
+import * as Common from "../../store/setting";
+import type { MapStore } from "nanostores";
 
 type Props = {
   id?: string;
   label: string;
   checked?: boolean;
   onChange?: (isOn: boolean) => void;
-  $key?: keyof RawSetting;
+  $store?:
+    | {
+        key: keyof Twitter.RawSetting;
+        store: "twitter";
+      }
+    | {
+        key: keyof Hitomi.RawSetting;
+        store: "hitomi";
+      }
+    | {
+        key: keyof Common.RawSetting;
+        store: "common";
+      };
+  // $key?: keyof RawSetting;
 };
 
-export default function Toggle({ id, label, checked, onChange, $key }: Props) {
+export default function Toggle({
+  id,
+  label,
+  checked,
+  onChange,
+  $store,
+}: Props) {
+  const $setting: MapStore | null = {
+    twitter: Twitter.$setting,
+    hitomi: Hitomi.$setting,
+    common: Common.$setting,
+    none: null,
+  }[$store?.store ?? "none"];
   const [isOn, setIsOn] = useState(
-    ($key && $setting.get()[$key]) ?? checked ?? false
+    ($store && $setting!.get()[$store.key]) ?? checked ?? false
   );
 
   const handleToggle = () => {
     setIsOn(!isOn);
     onChange?.(!isOn);
-    $key && $setting.setKey($key, !isOn);
+    $store && $setting!.setKey($store.key, !isOn);
   };
 
   return (

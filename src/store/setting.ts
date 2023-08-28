@@ -2,18 +2,15 @@ import { persistentMap } from "@nanostores/persistent";
 import { map } from "nanostores";
 
 export type RawSetting = {
-  autoPlay: "true" | "false";
-  loop: "true" | "false";
+  censored: "true" | "false";
 };
 
 export interface Setting {
-  autoPlay: boolean;
-  loop: boolean;
+  censored: boolean;
 }
 
-export const $rawSetting = persistentMap<RawSetting>("twitter:settings:", {
-  autoPlay: "true",
-  loop: "false",
+export const $rawSetting = persistentMap<RawSetting>("settings:", {
+  censored: import.meta.env.PUBLIC_SCHOOL == "1" ? "true" : "false",
 });
 
 export const $setting = map<Setting>(rawSettingToSetting($rawSetting.get()));
@@ -24,14 +21,12 @@ $setting.listen((value) => {
 
 function rawSettingToSetting(raw: RawSetting): Setting {
   return {
-    autoPlay: raw.autoPlay == "true" ? true : false,
-    loop: raw.loop == "true" ? true : false,
+    censored: raw.censored == "true" ? true : false,
   };
 }
 
 function settingToRawSetting(setting: Setting): RawSetting {
   return {
-    autoPlay: setting.autoPlay ? "true" : "false",
-    loop: setting.loop ? "true" : "false",
+    censored: setting.censored ? "true" : "false",
   };
 }
