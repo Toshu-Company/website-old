@@ -1,6 +1,5 @@
 import { keyframes, styled } from "styled-components";
-import Image from "../Image";
-import Loading from "../../assets/loading.jpg";
+import Image from "../../Image";
 
 export default function Skeleton() {
   return (

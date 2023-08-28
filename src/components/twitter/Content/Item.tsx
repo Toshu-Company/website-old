@@ -1,14 +1,12 @@
 import { keyframes, styled } from "styled-components";
-import Image from "../Image";
+import Image from "../../Image";
 import { useEffect, useState } from "react";
-import type { Extended, VideoDetail } from "../../libs/api/twi-videos.net";
-import { TwiVideosNet } from "../../libs/api";
-import { isSchool } from "../../libs/school";
+import type { Extended, VideoDetail } from "../../../libs/api/twi-videos.net";
+import { TwiVideosNet } from "../../../libs/api";
+import { isSchool } from "../../../libs/school";
 import Modal from "../Modal";
-import { $setting } from "../../store/twitter/setting";
-import Loading from "../../assets/loading.jpg";
-import type { GetImageResult } from "astro";
-import AssetImage from "../AssetImage";
+import { $setting } from "../../../store/twitter/setting";
+import Loading from "../../../assets/loading.jpg";
 
 type Props = {
   videoId: string;
@@ -38,12 +36,14 @@ export default function Item(props: Props) {
         <ImageWrapper>
           {censored ? (
             <RoundedImage src={Loading.src} fill alt={"article"} />
-          ) : (
+          ) : detail?.thumbnails[1].url ? (
             <RoundedImage
-              src={detail?.thumbnails[1].url ?? Loading.src}
+              src={detail?.thumbnails[1].url}
               fill
               alt={"article"}
             />
+          ) : (
+            <Gradient />
           )}
         </ImageWrapper>
         <TextWrapper>
@@ -138,6 +138,8 @@ const RoundedImage = styled(Image)`
   border-radius: 8px 8px 0 0;
 `;
 
-// const OptimizedRoundedImage = styled(AssetImage)`
-//   border-radius: 8px 8px 0 0;
-// `;
+const Gradient = styled.div`
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(transparent, #000);
+`;

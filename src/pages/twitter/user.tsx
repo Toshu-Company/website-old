@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { SearchResultVideo } from "../../libs/api/twi-videos.net";
 import useIntersectionObserver from "../../libs/observer";
 import { TwiVideosNet } from "../../libs/api";
-import Content from "../../components/Content";
+import Content from "../../components/twitter/Content";
 
 export default function Index() {
   const [user, setUser] = useState<string>("");

@@ -1,7 +1,7 @@
 import { useStore } from "@nanostores/react";
 import styled from "styled-components";
 import { $favorite } from "../../store/twitter/favorite";
-import Content from "../../components/Content";
+import Content from "../../components/twitter/Content";
 
 export default function Index() {
   const favorite = useStore($favorite);

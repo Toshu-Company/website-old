@@ -1,10 +1,10 @@
 import { styled } from "styled-components";
 import { useState } from "react";
-import Modal from ".";
+import Modal from "../../Modal";
 import Favorite from "../Content/Favorite";
-import { isSchool } from "../../libs/school";
-import { Extended, VideoDetail } from "../../libs/api/twi-videos.net";
-import { $setting } from "../../store/twitter/setting";
+import { isSchool } from "../../../libs/school";
+import { Extended, VideoDetail } from "../../../libs/api/twi-videos.net";
+import { $setting } from "../../../store/twitter/setting";
 
 type Props = {
   close: () => void;
