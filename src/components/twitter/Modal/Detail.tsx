@@ -2,9 +2,9 @@ import { styled } from "styled-components";
 import { useState } from "react";
 import Modal from "../../Modal";
 import Favorite from "../Content/Favorite";
-import { isSchool } from "../../../libs/school";
 import { Extended, VideoDetail } from "../../../libs/api/twi-videos.net";
-import { $setting } from "../../../store/twitter/setting";
+import { $setting as $twitter } from "../../../store/twitter/setting";
+import { $setting as $common } from "../../../store/setting";
 
 type Props = {
   close: () => void;
@@ -13,12 +13,14 @@ type Props = {
 };
 
 export default function Detail({ close, id, detail }: Props) {
-  const [censored, setCensored] = useState<boolean>(isSchool());
-  const [autoPlay, setAutoPlay] = useState<boolean>($setting.get().autoPlay);
-  const [loop, setLoop] = useState<boolean>($setting.get().loop);
+  const [censored, setCensored] = useState<boolean>();
+  const [autoPlay, setAutoPlay] = useState<boolean>($twitter.get().autoPlay);
+  const [loop, setLoop] = useState<boolean>($twitter.get().loop);
 
-  $setting.listen((setting) => {
+  $common.listen((setting) => {
     setCensored(setting.censored);
+  });
+  $twitter.listen((setting) => {
     setAutoPlay(setting.autoPlay);
     setLoop(setting.loop);
   });

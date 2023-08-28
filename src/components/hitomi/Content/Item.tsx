@@ -1,21 +1,17 @@
 import { keyframes, styled } from "styled-components";
 import Image from "../../Image";
 import { useEffect, useState } from "react";
-import type { Extended, VideoDetail } from "../../../libs/api/twi-videos.net";
-import { TwiVideosNet } from "../../../libs/api";
-import Modal from "../Modal";
+import { Hitomi } from "../../../libs/api";
 import { $setting } from "../../../store/setting";
 import Loading from "../../../assets/loading.jpg";
 
 type Props = {
-  videoId: string;
+  index: number;
   click?: () => void;
 };
 
 export default function Item(props: Props) {
-  const [detail, setDetail] = useState<
-    VideoDetail | Extended.VideoDetailExtend
-  >();
+  const [detail, setDetail] = useState<Hitomi.IDetail>();
   const [modal, setModal] = useState<boolean>(false);
   const [censored, setCensored] = useState<boolean>($setting.get().censored);
 
@@ -26,8 +22,8 @@ export default function Item(props: Props) {
   }, []);
 
   useEffect(() => {
-    TwiVideosNet.getDetail(props.videoId).then((res) => setDetail(res));
-  }, [props.videoId]);
+    Hitomi.getDetail(props.index.toString()).then((res) => setDetail(res));
+  }, [props.index]);
 
   return (
     <>
@@ -35,9 +31,9 @@ export default function Item(props: Props) {
         <ImageWrapper>
           {censored ? (
             <RoundedImage src={Loading.src} fill alt={"article"} />
-          ) : detail?.thumbnails[1].url ? (
+          ) : detail?.files[0]?.hash ? (
             <RoundedImage
-              src={detail?.thumbnails[1].url}
+              src={Hitomi.getImageURL(detail?.files[0]?.hash, "thumbnail")}
               fill
               alt={"article"}
             />
@@ -46,16 +42,16 @@ export default function Item(props: Props) {
           )}
         </ImageWrapper>
         <TextWrapper>
-          <Text>{detail?.uploader ?? "\u00a0"}</Text>
+          <Text>{detail?.title ?? "\u00a0"}</Text>
         </TextWrapper>
       </Wrapper>
-      {modal && detail && (
+      {/* {modal && detail && (
         <Modal.Detail
           close={() => setModal(false)}
           id={props.videoId}
           detail={detail}
         />
-      )}
+      )} */}
     </>
   );
 }

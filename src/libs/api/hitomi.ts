@@ -106,7 +106,7 @@ export type HitomiLanguage = (typeof HitomiLanguages)[number] | "all";
  * @param language - The language to fetch indexes for. Defaults to "all".
  * @returns A Promise that resolves to the fetched indexes.
  */
-function getIndexes(page?: number, language?: HitomiLanguage) {
+export function getIndexes(page?: number, language?: HitomiLanguage) {
   return fetchAPI("/", {
     query: {
       page,
@@ -122,7 +122,11 @@ function getIndexes(page?: number, language?: HitomiLanguage) {
  * @param language - The language to search in. Defaults to "all".
  * @returns A Promise that resolves to the search results.
  */
-function search(query: string, page?: number, language?: HitomiLanguage) {
+export function getSearch(
+  query: string,
+  page?: number,
+  language?: HitomiLanguage
+) {
   return fetchAPI("/search", {
     query: {
       query,
@@ -137,7 +141,7 @@ function search(query: string, page?: number, language?: HitomiLanguage) {
  * @param query - The search query to autocomplete.
  * @returns A Promise that resolves to the autocomplete suggestions.
  */
-function autocomplete(query: string) {
+export function getAutocomplete(query: string) {
   return fetchAPI("/search/suggest", {
     query: {
       query,
@@ -150,25 +154,113 @@ function autocomplete(query: string) {
  * @param id - The ID of the item to fetch.
  * @returns A Promise that resolves to the details of the item.
  */
-function getDetail(id: string) {
+export function getDetail(id: string) {
   return fetchAPI(`/detail/${id}`);
 }
 
 /**
- * Returns the URL for the specified type of image with the given ID.
- * @param id - The ID of the image.
- * @param type - The type of image to get the URL for. Can be "thumbnail", "webp", "avif", or "jpeg".
- * @returns The URL for the specified type of image with the given ID.
+ * Returns the URL for the specified image type and hash.
+ * @param hash - The hash of the image.
+ * @param type - The type of the image to retrieve.
+ * @returns The URL of the specified image.
  */
-function getImageURL(id: string, type: "thumbnail" | "webp" | "avif" | "jpeg") {
+export function getImageURL(
+  hash: string,
+  type:
+    | "thumbnail"
+    | "thumbnail-webp"
+    | "thumbnail-avif"
+    | "thumbnail-jpeg"
+    | "webp"
+    | "avif"
+    | "jpeg"
+) {
   switch (type) {
     case "thumbnail":
-      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/preview/${id}`;
+      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/preview/${hash}`;
+    case "thumbnail-webp":
+      return `${
+        import.meta.env.PUBLIC_HITOMI_API_URL
+      }/images/preview/${hash}?type=webp`;
+    case "thumbnail-avif":
+      return `${
+        import.meta.env.PUBLIC_HITOMI_API_URL
+      }/images/preview/${hash}?type=avif`;
+    case "thumbnail-jpeg":
+      return `${
+        import.meta.env.PUBLIC_HITOMI_API_URL
+      }/images/preview/${hash}?type=jpeg`;
     case "webp":
-      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/webp/${id}`;
+      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/webp/${hash}`;
     case "avif":
-      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/avif/${id}`;
+      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/avif/${hash}`;
     case "jpeg":
-      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/jpeg/${id}`;
+      return `${import.meta.env.PUBLIC_HITOMI_API_URL}/images/jpeg/${hash}`;
   }
+}
+
+export interface IDetail {
+  galleryurl: string;
+  id: string;
+  language_localname: string;
+  video: any;
+  characters: any;
+  language: string;
+  language_url: string;
+  scene_indexes: any[];
+  tags: Tag[];
+  artists: Artist[];
+  type: string;
+  japanese_title: string | null;
+  videofilename: any;
+  languages: Language[];
+  parodys: Parody[];
+  title: string;
+  groups: Group[];
+  related: number[];
+  files: File[];
+  date: string;
+}
+
+export interface Character {
+  url: string;
+  character: string;
+}
+
+export interface Tag {
+  female: string;
+  url: string;
+  male: string;
+  tag: string;
+}
+
+export interface Artist {
+  artist: string;
+  url: string;
+}
+
+export interface Language {
+  galleryid: string;
+  language_localname: string;
+  name: string;
+  url: string;
+}
+
+export interface Parody {
+  url: string;
+  parody: string;
+}
+
+export interface Group {
+  url: string;
+  group: string;
+}
+
+export interface File {
+  height: number;
+  haswebp: number;
+  width: number;
+  name: string;
+  hasavif: number;
+  hash: string;
 }
