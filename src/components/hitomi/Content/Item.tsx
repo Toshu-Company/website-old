@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { Hitomi } from "../../../libs/api";
 import { $setting } from "../../../store/setting";
 import Loading from "../../../assets/loading.jpg";
+import Modal from "../Modal";
 
 type Props = {
-  index: number;
+  index: string;
   click?: () => void;
 };
 
@@ -14,6 +15,7 @@ export default function Item(props: Props) {
   const [detail, setDetail] = useState<Hitomi.IDetail>();
   const [modal, setModal] = useState<boolean>(false);
   const [censored, setCensored] = useState<boolean>($setting.get().censored);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     $setting.listen((setting) => {
@@ -22,7 +24,7 @@ export default function Item(props: Props) {
   }, []);
 
   useEffect(() => {
-    Hitomi.getDetail(props.index.toString()).then((res) => setDetail(res));
+    Hitomi.getDetail(props.index).then((res) => setDetail(res));
   }, [props.index]);
 
   return (
@@ -30,13 +32,17 @@ export default function Item(props: Props) {
       <Wrapper onClick={() => setModal(true)}>
         <ImageWrapper>
           {censored ? (
-            <RoundedImage src={Loading.src} fill alt={"article"} />
+            <RoundedImage src={Loading.src} alt={"article"} />
           ) : detail?.files[0]?.hash ? (
-            <RoundedImage
-              src={Hitomi.getImageURL(detail?.files[0]?.hash, "thumbnail")}
-              fill
-              alt={"article"}
-            />
+            <>
+              <Gradient style={{ display: loading ? "block" : "none" }} />
+              <RoundedImage
+                src={Hitomi.getImageURL(detail?.files[0]?.hash, "thumbnail")}
+                alt={"article"}
+                onLoad={() => setLoading(false)}
+                style={{ display: loading ? "none" : "block" }}
+              />
+            </>
           ) : (
             <Gradient />
           )}
@@ -45,13 +51,13 @@ export default function Item(props: Props) {
           <Text>{detail?.title ?? "\u00a0"}</Text>
         </TextWrapper>
       </Wrapper>
-      {/* {modal && detail && (
+      {modal && detail && (
         <Modal.Detail
           close={() => setModal(false)}
-          id={props.videoId}
+          id={props.index}
           detail={detail}
         />
-      )} */}
+      )}
     </>
   );
 }
@@ -129,7 +135,10 @@ const Text = styled.p`
   }
 `;
 
-const RoundedImage = styled(Image)`
+const RoundedImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px 8px 0 0;
 `;
 

@@ -14,6 +14,7 @@ export default function Default({ close, children, maxWidth }: Props) {
         <Container
           style={{
             maxWidth: maxWidth ? maxWidth : 500,
+            maxHeight: "calc(100vh - 100px)",
           }}
           onClick={(e) => e.stopPropagation()}
         >

@@ -75,7 +75,9 @@ export default function Index() {
         <Content.Container>
           {loading.current
             ? [...Array(20)].map((_, i) => <Content.Skeleton key={i} />)
-            : indexes.map((v, i) => <Content.Item key={i} index={v} />)}
+            : indexes.map((v, i) => (
+                <Content.Item key={i} index={v.toString()} />
+              ))}
           <Intersection
             id="intersection"
             ref={target}
