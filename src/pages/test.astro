@@ -1,0 +1,10 @@
+---
+import Toggle from "../components/Settings/Toggle.svelte";
+import Layout from "../layouts/Layout.astro"
+import Component from "./test.svelte"
+---
+
+<Layout title="">
+    <Component client:load />
+    <Toggle label="Test" store={{key:'censored', store:'common'}} client:idle />
+</Layout>
