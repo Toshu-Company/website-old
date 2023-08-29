@@ -1,7 +1,7 @@
 ---
 import { random } from "../../libs/random";
 import BaseModal from "../Modal/Default.astro";
-import Toggle from "./Toggle";
+import Toggle from "./Toggle.svelte";
 
 export const MODAL_ID = random();
 
@@ -12,17 +12,17 @@ const root = Astro.url.pathname.split('/')[1];
     <div class="wrapper">
         <div class="category">Common</div>
         <div class="toggle">
-            <Toggle label="Censored" $store={{ key: "censored", store: "common" }} client:only="react" />
+            <Toggle label="Censored" store={{ key: "censored", store: "common" }} client:idle />
         </div>
         { root === 'twitter' &&
             <div class="splitter" />
             <div class="category">Video</div>
             <div class="group">
                 <div class="grow">
-                    <Toggle label="Autoplay" $store={{ key: "autoPlay", store: "twitter" }} client:only="react" />
+                    <Toggle label="Autoplay" store={{ key: "autoPlay", store: "twitter" }} client:idle />
                 </div>
                 <div class="grow">
-                    <Toggle label="Loop" $store={{ key: "loop", store: "twitter" }} client:only="react" />
+                    <Toggle label="Loop" store={{ key: "loop", store: "twitter" }} client:idle />
                 </div>
             </div>
         }
@@ -30,7 +30,7 @@ const root = Astro.url.pathname.split('/')[1];
             <div class="splitter" />
             <div class="category">Filter</div>
             <div class="toggle">
-                <Toggle label="Filter" $store={{ key: "filter", store: "hitomi" }} client:only="react" />
+                <Toggle label="Filter" store={{ key: "filter", store: "hitomi" }} client:idle />
             </div>
         }
     </div>
