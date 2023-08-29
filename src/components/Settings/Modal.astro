@@ -9,7 +9,7 @@ const root = Astro.url.pathname.split('/')[1];
 ---
 
 <BaseModal id={MODAL_ID}>
-    <div class="wrapper">
+    <!-- <div class="wrapper">
         <div class="category">Common</div>
         <div class="toggle">
             <Toggle label="Censored" store={{ key: "censored", store: "common" }} client:idle />
@@ -33,7 +33,9 @@ const root = Astro.url.pathname.split('/')[1];
                 <Toggle label="Filter" store={{ key: "filter", store: "hitomi" }} client:idle />
             </div>
         }
-    </div>
+    </div> -->
+
+    
 </BaseModal>
 <style>
     .wrapper {

@@ -48,7 +48,7 @@ async function fetchAPI(url: string, prop: Props = {}) {
  */
 export async function getVideo(id: string): Promise<VideoInfo> {
   const data = await fetchAPI(
-    `${import.meta.env.PUBLIC_API_URL}/twi-videos/${id}`
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twi-videos/${id}`
   );
   return data;
 }
@@ -62,7 +62,7 @@ export async function getDetail(
   id: string
 ): Promise<VideoDetail | Extended.VideoDetailExtend> {
   const data = await fetchAPI(
-    `${import.meta.env.PUBLIC_API_URL}/twi-videos/${id}/detail`
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twi-videos/${id}/detail`
   );
   return data;
 }
@@ -73,9 +73,12 @@ export async function getDetail(
  * @returns A Promise that resolves to the fetched video data.
  */
 export async function getIndex(page = 1): Promise<SearchResult> {
-  const data = await fetchAPI(`${import.meta.env.PUBLIC_API_URL}/twi-videos`, {
-    query: { page },
-  });
+  const data = await fetchAPI(
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twi-videos`,
+    {
+      query: { page },
+    }
+  );
   return data;
 }
 
@@ -85,7 +88,7 @@ export async function getIndex(page = 1): Promise<SearchResult> {
  */
 export async function getRecent(): Promise<SearchResult> {
   const data = await fetchAPI(
-    `${import.meta.env.PUBLIC_API_URL}/twi-videos/recent`
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twi-videos/recent`
   );
   return data;
 }
@@ -98,7 +101,7 @@ export async function getRandom(): Promise<
   VideoDetail | Extended.VideoDetailExtend
 > {
   const data = await fetchAPI(
-    `${import.meta.env.PUBLIC_API_URL}/twi-videos/random`
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twi-videos/random`
   );
   return data;
 }
@@ -114,7 +117,7 @@ export async function getSearch(
   page = 1
 ): Promise<SearchResult> {
   const data = await fetchAPI(
-    `${import.meta.env.PUBLIC_API_URL}/twi-videos/search`,
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twi-videos/search`,
     {
       query: { query, page },
     }
@@ -133,7 +136,7 @@ export async function getSearchUser(
   page = 1
 ): Promise<SearchResult> {
   const data = await fetchAPI(
-    `${import.meta.env.PUBLIC_API_URL}/twi-videos/search/user`,
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twi-videos/search/user`,
     {
       query: { id, page },
     }

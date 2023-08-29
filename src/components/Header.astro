@@ -132,7 +132,7 @@ const { icon, name } = Astro.props;
     background-color: transparent;
   }
 
-  button {
+  button, a.button {
     transition: transform 0.2s ease-in-out;
 
     &:hover {
@@ -147,19 +147,6 @@ const { icon, name } = Astro.props;
 
   form {
     display: flex;
-  }
-
-  a.button {
-    transition: transform 0.2s ease-in-out;
-
-    &:hover {
-        transform: translateY(-2px);
-        border-bottom: 2px solid #1da1f2;
-    }
-
-    &:active {
-        transform: translateY(0);
-    }
   }
 
   .row {
