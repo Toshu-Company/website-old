@@ -19,6 +19,9 @@ export default defineConfig({
     ssr: {
       noExternal: ["styled-components"],
     },
+    optimizeDeps: {
+      exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
+    },
   },
   integrations: [
     react(),

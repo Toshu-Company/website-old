@@ -77,9 +77,6 @@ export default function Index() {
           {loading.current
             ? [...Array(20)].map((_, i) => <Content.Skeleton key={i} />)
             : videos.map((v, i) => <Content.Item key={i} videoId={v.id} />)}
-          {/* {videos.map((v, i) => (
-            <Content.Item key={i} videoId={v.id} />
-          ))} */}
           <Intersection
             id="intersection"
             ref={target}

@@ -1,20 +1,20 @@
 ---
-import type { ImageMetadata } from 'astro';
+import type { ImageMetadata } from "astro";
 
-import Image from './Image';
+import Image from "./Image";
 
 import SearchIcon from "../assets/search.svg";
 import SettingIcon from "../assets/setting.svg";
 import HeartIcon from "../assets/heart.svg";
 
-import Modal, { MODAL_ID } from './Settings/Modal.astro';
+import Modal, { MODAL_ID } from "./Settings/Modal.astro";
 
 interface Props {
-    icon: ImageMetadata;
-    name: string;
+  icon: ImageMetadata;
+  name: string;
 }
 
-const rootpath = '/' + Astro.url.pathname.split('/')[1];
+const rootpath = "/" + Astro.url.pathname.split("/")[1];
 
 const { icon, name } = Astro.props;
 ---
@@ -34,7 +34,7 @@ const { icon, name } = Astro.props;
     <div class="row">
       <form action="" method="get">
         <div class="search">
-          <input type="text" name="search" placeholder="Search...">
+          <input type="text" name="search" placeholder="Search..." />
           <button>
             <Image
               src={SearchIcon.src}
@@ -89,7 +89,7 @@ const { icon, name } = Astro.props;
 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
-  
+
   .container {
     max-width: 1300px;
     width: 90%;
@@ -113,14 +113,14 @@ const { icon, name } = Astro.props;
     color: white;
 
     &::placeholder {
-        color: #8899a6;
+      color: #8899a6;
     }
 
     @media (max-width: 768px) {
-        width: 150px;
-        height: 30px;
+      width: 150px;
+      height: 30px;
 
-        font-size: 14px;
+      font-size: 14px;
     }
   }
 
@@ -132,16 +132,17 @@ const { icon, name } = Astro.props;
     background-color: transparent;
   }
 
-  button, a.button {
+  button,
+  a.button {
     transition: transform 0.2s ease-in-out;
 
     &:hover {
-        transform: translateY(-2px);
-        border-bottom: 2px solid #1da1f2;
+      transform: translateY(-2px);
+      border-bottom: 2px solid #1da1f2;
     }
 
     &:active {
-        transform: translateY(0);
+      transform: translateY(0);
     }
   }
 
@@ -155,7 +156,7 @@ const { icon, name } = Astro.props;
     gap: 20px;
 
     @media (max-width: 768px) {
-        gap: 10px;
+      gap: 10px;
     }
   }
 </style>

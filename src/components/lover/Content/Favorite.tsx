@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { useStore } from "@nanostores/react";
 import Image from "../../Image";
-import { $favorite } from "../../../store/lover/favorite";
+import { $favorite } from "../../../store/twitter/favorite";
 import HeartIcon from "../../../assets/heart.svg";
 import HeartFillIcon from "../../../assets/heart-fill.svg";
 
