@@ -2,7 +2,7 @@ import { defineConfig, sharpImageService } from "astro/config";
 import react from "@astrojs/react";
 import compress from "astro-compress";
 import svelte from "@astrojs/svelte";
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel/serverless';
 const isDev = process.env.NODE_ENV === "development";
 
 // https://astro.build/config
@@ -29,7 +29,5 @@ export default defineConfig({
     }),
   ],
   output: 'hybrid',
-  adapter: node({
-    mode: 'standalone',
-  }),
+  adapter: vercel(),
 });

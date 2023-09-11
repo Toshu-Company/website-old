@@ -10,9 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^6.0.0",
     "@astrojs/react": "^2.3.2",
     "@astrojs/svelte": "^3.1.1",
+    "@astrojs/vercel": "^4.0.5",
     "@ffmpeg/ffmpeg": "0.12.6",
     "@ffmpeg/util": "^0.12.1",
     "@nanostores/persistent": "^0.9.1",
