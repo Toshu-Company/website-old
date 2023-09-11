@@ -31,7 +31,9 @@ export default function Detail({ close, id, detail }: Props) {
 
   useEffect(() => {
     if (Hls.isSupported() && videoRef.current) {
-      const hls = new Hls();
+      const hls = new Hls({
+        maxBufferLength: 60 * 60,
+      });
       hls.loadSource(translateVideoURL(detail.video));
       hls.attachMedia(videoRef.current);
     }
