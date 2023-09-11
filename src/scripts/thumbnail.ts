@@ -37,6 +37,18 @@ const cachedBlobURL = async (url: string, mimeType: string) => {
   return blobURL;
 };
 
+const cacheFile = async (key: string, blob: any) => {
+  const dataUrl = await blobToDataURL(blob);
+  localStorage.setItem(key, dataUrl);
+};
+
+const cachedFile = async (key: string) => {
+  const dataUrl = localStorage.getItem(key);
+  if (dataUrl) {
+    return dataURLtoBlob(dataUrl);
+  }
+};
+
 const load = async (ffmpeg: FFmpeg) => {
   console.log("loading ffmpeg");
   await ffmpeg
@@ -59,7 +71,37 @@ export const translateVideoURL = (video: string) => {
   return `${import.meta.env.PUBLIC_TWITTER_API_URL}/lover${url.pathname}`;
 };
 
+//**dataURL to blob**
+function dataURLtoBlob(dataurl: string): any {
+  var arr = dataurl.split(","),
+    mime = arr[0].match(/:(.*?);/)![1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+//**blob to dataURL**
+async function blobToDataURL(blob: any) {
+  return new Promise<string>((resolve, reject) => {
+    var a = new FileReader();
+    a.onload = function (e) {
+      resolve(e.target?.result as string);
+    };
+    a.readAsDataURL(blob);
+  });
+}
+
 export const getThumbnail = async (video: string) => {
+  if (typeof window !== "undefined") {
+    const cached = await cachedFile(video);
+    if (cached) {
+      return URL.createObjectURL(cached);
+    }
+  }
   const worker = await getWorker();
   const ffmpeg = worker.ffmpeg;
   console.log("workers", workers.length);
@@ -92,5 +134,7 @@ export const getThumbnail = async (video: string) => {
   if (typeof window === "undefined") {
     return data;
   }
-  return URL.createObjectURL(new Blob([data], { type: "image/jpeg" }) as any);
+  const blob: any = new Blob([data], { type: "image/jpeg" });
+  cacheFile(video, await blobToDataURL(blob));
+  return URL.createObjectURL(blob);
 };
