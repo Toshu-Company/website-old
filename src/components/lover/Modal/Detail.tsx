@@ -5,7 +5,7 @@ import Favorite from "../Content/Favorite";
 import { VideoInfo } from "../../../libs/api/lover";
 import { $setting as $twitter } from "../../../store/twitter/setting";
 import { $setting as $common } from "../../../store/setting";
-import { translateVideoURL } from "../../../libs/ffmpeg/thumbnail";
+import { translateVideoURL } from "../../../scripts/thumbnail";
 import Hls from "hls.js";
 
 type Props = {

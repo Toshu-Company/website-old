@@ -5,14 +5,8 @@ import type { VideoInfo } from "../../../libs/api/lover";
 import { Lover } from "../../../libs/api";
 import { $setting } from "../../../store/setting";
 import Loading from "../../../assets/loading.jpg";
-import {
-  getThumbnail,
-  translateVideoURL,
-} from "../../../libs/ffmpeg/thumbnail";
-import { toBlobURL } from "@ffmpeg/util";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { getThumbnail, translateVideoURL } from "../../../scripts/thumbnail";
 import Modal from "../Modal";
-import Hls from "hls.js";
 
 type Props = {
   videoId: string;

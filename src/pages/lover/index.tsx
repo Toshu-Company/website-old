@@ -5,8 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useIntersectionObserver from "../../libs/observer";
 import type { SearchResultVideo } from "../../libs/api/lover";
 import { Lover } from "../../libs/api";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { toBlobURL } from "@ffmpeg/util";
 
 export default function Index() {
   const [videos, setVideos] = useState<SearchResultVideo[]>([]);
