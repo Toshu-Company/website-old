@@ -1,5 +1,6 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { Blob } from "buffer";
 
 const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.2/dist/esm";
 
@@ -52,5 +53,5 @@ export const getThumbnail = async (video: string) => {
   if (typeof window === "undefined") {
     return data;
   }
-  return URL.createObjectURL(new window.Blob([data], { type: "image/jpeg" }));
+  return URL.createObjectURL(new Blob([data], { type: "image/jpeg" }) as any);
 };
