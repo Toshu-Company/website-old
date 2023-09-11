@@ -1,5 +1,5 @@
 import Image from "../../Image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { keyframes, styled } from "styled-components";
 import type { VideoInfo } from "../../../libs/api/lover";
 import { Lover } from "../../../libs/api";
@@ -21,11 +21,21 @@ export default function Item(props: Props) {
 
   const videoRef = useRef();
 
+  const loadThumbnail = useCallback(
+    async (video: string) => {
+      const res = await getThumbnail(translateVideoURL(video));
+      if (typeof res === "string") return setImageUrl(res);
+    },
+    [setImageUrl]
+  );
+
   useEffect(() => {
     if (detail?.id) {
-      getThumbnail(translateVideoURL(detail.video)).then((res) => {
-        if (typeof res === "string") setImageUrl(res);
-      });
+      loadThumbnail(detail.video).catch(() =>
+        setTimeout(() => {
+          loadThumbnail(detail.video);
+        }, 1000)
+      );
     }
   }, [detail]);
 

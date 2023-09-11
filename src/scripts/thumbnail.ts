@@ -4,17 +4,53 @@ import { Blob } from "buffer";
 
 const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.2/dist/esm";
 
-// const ffmpeg = new FFmpeg();
+const workers: {
+  ffmpeg: FFmpeg;
+  used: boolean;
+}[] = [];
+
+const generateWorker = async () => {
+  const ffmpeg = new FFmpeg();
+  await load(ffmpeg);
+  const worker = {
+    ffmpeg,
+    used: false,
+  };
+  workers.push(worker);
+  return worker;
+};
+
+export const getWorker = async () => {
+  const worker =
+    workers.find((worker) => !worker.used) ?? (await generateWorker());
+  worker.used = true;
+  return worker;
+};
+
+const _cache = new Map<string, string>();
+const cachedBlobURL = async (url: string, mimeType: string) => {
+  if (_cache.has(url)) {
+    return _cache.get(url);
+  }
+  const blobURL = await toBlobURL(url, mimeType);
+  _cache.set(url, blobURL);
+  return blobURL;
+};
 
 const load = async (ffmpeg: FFmpeg) => {
   console.log("loading ffmpeg");
-  // ffmpeg.on("log", ({ message }) => {
-  //   console.log(message);
-  // });
-  await ffmpeg.load({
-    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
-  });
+  await ffmpeg
+    .load({
+      coreURL: await cachedBlobURL(
+        `${baseURL}/ffmpeg-core.js`,
+        "text/javascript"
+      ),
+      wasmURL: await cachedBlobURL(
+        `${baseURL}/ffmpeg-core.wasm`,
+        "application/wasm"
+      ),
+    })
+    .catch(console.error);
   console.log("ffmpeg loaded");
 };
 
@@ -24,7 +60,9 @@ export const translateVideoURL = (video: string) => {
 };
 
 export const getThumbnail = async (video: string) => {
-  const ffmpeg = new FFmpeg();
+  const worker = await getWorker();
+  const ffmpeg = worker.ffmpeg;
+  console.log("workers", workers.length);
   if (!ffmpeg.loaded) {
     await load(ffmpeg);
   }
@@ -47,6 +85,7 @@ export const getThumbnail = async (video: string) => {
     "output.jpg",
   ]);
   const data = await ffmpeg.readFile("output.jpg");
+  worker.used = false;
   if (typeof data === "string") {
     return data;
   }
