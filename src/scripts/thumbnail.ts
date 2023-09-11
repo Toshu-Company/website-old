@@ -83,7 +83,7 @@ export const translateVideoURL = (video: string) => {
 
 export const getThumbnail = async (video: string) => {
   if (typeof window !== "undefined") {
-    const cached = await getFile(video);
+    const cached = await getFile(`thumbnail:${video}`);
     if (cached) {
       return URL.createObjectURL(cached);
     }
@@ -117,7 +117,7 @@ export const getThumbnail = async (video: string) => {
     return data;
   }
   const blob: any = new Blob([data], { type: "image/jpeg" });
-  setFile(video, blob);
+  setFile(`thumbnail:${video}`, blob);
   return URL.createObjectURL(blob);
 };
 
