@@ -17,24 +17,16 @@ export default function Item(props: Props) {
   const [detail, setDetail] = useState<VideoInfo>();
   const [modal, setModal] = useState<boolean>(false);
   const [censored, setCensored] = useState<boolean>($setting.get().censored);
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const videoRef = useRef();
 
   useEffect(() => {
     if (detail?.id) {
-      // https://tistpry.com/2023/09/10/1111/master7.m3u8
       getThumbnail(translateVideoURL(detail.video)).then((res) => {
-        setImageUrl(res);
+        if (typeof res === "string") setImageUrl(res);
       });
     }
-    // if (Hls.isSupported()) {
-    //   const hls = new Hls();
-    //   hls.loadSource(
-    //     `http://localhost:3000/lover/2023/09/10/1111/master7.m3u8`
-    //   );
-    //   hls.attachMedia(videoRef.current);
-    // }
   }, [detail]);
 
   useEffect(() => {
@@ -53,9 +45,8 @@ export default function Item(props: Props) {
         <ImageWrapper>
           {censored ? (
             <RoundedImage src={Loading.src} fill alt={"article"} />
-          ) : detail?.id ? (
-            // <video ref={videoRef} />
-            <RoundedImage src={`${imageUrl}`} fill alt={"article"} />
+          ) : imageUrl ? (
+            <RoundedImage src={imageUrl} fill alt={"article"} />
           ) : (
             <Gradient />
           )}

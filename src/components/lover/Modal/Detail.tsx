@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import Modal from "../../Modal";
 import Favorite from "../Content/Favorite";
-import { VideoInfo } from "../../../libs/api/lover";
+import type { VideoInfo } from "../../../libs/api/lover";
 import { $setting as $twitter } from "../../../store/twitter/setting";
 import { $setting as $common } from "../../../store/setting";
 import { translateVideoURL } from "../../../scripts/thumbnail";

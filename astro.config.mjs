@@ -3,6 +3,7 @@ import react from "@astrojs/react";
 import compress from "astro-compress";
 import svelte from "@astrojs/svelte";
 import vercel from '@astrojs/vercel/serverless';
+import node from '@astrojs/node';
 const isDev = process.env.NODE_ENV === "development";
 
 // https://astro.build/config
@@ -28,6 +29,9 @@ export default defineConfig({
       CSS: false,
     }),
   ],
-  output: 'hybrid',
-  adapter: vercel(),
+  output: 'server',
+  // adapter: vercel(),
+  adapter: node({
+    mode: 'standalone',
+  }),
 });
