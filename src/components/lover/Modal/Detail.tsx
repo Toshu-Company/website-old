@@ -30,7 +30,7 @@ export default function Detail({ close, id, detail }: Props) {
   });
 
   useEffect(() => {
-    if (Hls.isSupported() && videoRef.current) {
+    if (!censored && Hls.isSupported() && videoRef.current) {
       const hls = new Hls({
         maxBufferLength: 60 * 60,
       });
@@ -60,7 +60,9 @@ export default function Detail({ close, id, detail }: Props) {
             </Menu>
           </TopRow>
           <ExternalLink href={detail.webpage_url} target="_blank">
-            <Title>{detail.title}</Title>
+            <Title>
+              {censored ? detail.title ?? "\u00a0" : "Good Picture 👍"}
+            </Title>
           </ExternalLink>
         </Wrapper>
       </Modal.Default>
