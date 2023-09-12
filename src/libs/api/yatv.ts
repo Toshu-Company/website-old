@@ -55,6 +55,9 @@ export const MIRROR_URL = `${
 }/yatv/mirror`;
 export async function mirror(url: string) {
   console.log("mirror", url);
+  // const encoded = btoa(url);
+  // const data = await fetch(`${MIRROR_URL}?url=${encoded}`);
+  // return data;
   const data = await fetch(MIRROR_URL, {
     method: "POST",
     headers: {

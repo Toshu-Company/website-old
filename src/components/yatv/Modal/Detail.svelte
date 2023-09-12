@@ -4,6 +4,7 @@
   import Default from "../../Modal/Default.svelte";
   import Hls from "hls.js";
   import { Yatv } from "../../../libs/api";
+  import { MIRROR_URL } from "../../../libs/api/yatv";
 
   let videoRef: HTMLVideoElement;
 
@@ -23,6 +24,8 @@
       const hls = new Hls({
         maxBufferLength: 60 * 2,
         xhrSetup(xhr, url) {
+          // const encoded = btoa(url);
+          // xhr.open("GET", `${MIRROR_URL}?url=${encoded}`, true);
           xhr.open("POST", Yatv.MIRROR_URL, true);
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.send(
