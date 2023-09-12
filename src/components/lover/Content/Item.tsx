@@ -62,7 +62,9 @@ export default function Item(props: Props) {
           )}
         </ImageWrapper>
         <TextWrapper>
-          <Text>{detail?.title ?? "\u00a0"}</Text>
+          <Text>
+            {censored ? detail?.title ?? "\u00a0" : "Good Picture 👍"}
+          </Text>
         </TextWrapper>
       </Wrapper>
       {modal && detail && (
