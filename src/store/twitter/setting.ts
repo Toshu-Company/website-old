@@ -17,6 +17,7 @@ export const $rawSetting = persistentMap<RawSetting>("twitter:settings:", {
 });
 
 export const $setting = map<Setting>(rawSettingToSetting($rawSetting.get()));
+export const setting = $setting;
 
 $setting.listen((value) => {
   $rawSetting.set(settingToRawSetting(value));

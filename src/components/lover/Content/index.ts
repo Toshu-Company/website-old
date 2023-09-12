@@ -1,4 +1,4 @@
-import Item from "./Item";
+import Item from "./Item.svelte";
 
 export default {
   Item,

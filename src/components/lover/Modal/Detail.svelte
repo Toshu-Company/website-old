@@ -1,10 +1,11 @@
 <script lang="ts">
   import type { VideoInfo } from "../../../libs/api/lover";
   import { setting as common } from "../../../store/setting";
+  import { setting as twitter } from "../../../store/twitter/setting";
   import { translateVideoURL } from "../../../scripts/thumbnail";
   import Default from "../../Modal/Default.svelte";
-  import Hls from "hls.js";
   import Favorite from "../Content/Favorite.svelte";
+  import Hls from "hls.js";
 
   let videoRef: HTMLVideoElement;
 
@@ -19,14 +20,22 @@
       hls.loadSource(translateVideoURL(detail.video));
       hls.attachMedia(videoRef);
     } else {
-      videoRef.src = "https://youtu.be/0bIRwBpBcZQ";
+      videoRef.src =
+        "https://file-examples.com/storage/fe7e31ec4b64ff77da87142/2017/04/file_example_MP4_480_1_5MG.mp4";
     }
   }
 </script>
 
 <Default maxWidth={1200} {close}>
   <div class="wrapper">
-    <video bind:this={videoRef} controls autofocus />
+    <video
+      bind:this={videoRef}
+      controls
+      loop={$twitter.loop}
+      autoplay={$twitter.autoPlay}
+    >
+      <track kind="captions" />
+    </video>
     <div class="top-row">
       <div class="menu">
         <Favorite videoId={detail.id} />

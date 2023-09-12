@@ -1,10 +1,10 @@
 ---
 import Container from "../../components/Container.astro";
 import Layout from "../../layouts/lover/Layout.astro";
-import Content from ".";
+import Content from "./index.svelte";
 ---
 
 <Layout title="Welcome to Lover000." />
 <Container>
-  <Content client:only="react" />
+  <Content client:only="svelte" />
 </Container>

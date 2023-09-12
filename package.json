@@ -27,7 +27,8 @@
     "sass": "^1.66.1",
     "sharp": "^0.32.5",
     "styled-components": "^6.0.7",
-    "svelte": "^4.2.0"
+    "svelte": "^4.2.0",
+    "svelte-intersection-observer": "^0.10.1"
   },
   "devDependencies": {
     "@types/node": "^20.5.6",

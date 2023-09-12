@@ -16,7 +16,7 @@ export const prerender = true;
         <div class="toggle">
             <Toggle label="Censored" store={{ key: "censored", store: "common" }} client:idle />
         </div>
-        { root === 'twitter' &&
+        { ['twitter', 'lover'].includes(root) &&
             <div class="splitter" />
             <div class="category">Video</div>
             <div class="group">
