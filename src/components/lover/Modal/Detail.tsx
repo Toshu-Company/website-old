@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function Detail({ close, id, detail }: Props) {
-  const [censored, setCensored] = useState<boolean>();
+  const [censored, setCensored] = useState<boolean>($common.get().censored);
   const [autoPlay, setAutoPlay] = useState<boolean>($twitter.get().autoPlay);
   const [loop, setLoop] = useState<boolean>($twitter.get().loop);
 
