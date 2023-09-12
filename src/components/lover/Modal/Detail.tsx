@@ -61,7 +61,7 @@ export default function Detail({ close, id, detail }: Props) {
           </TopRow>
           <ExternalLink href={detail.webpage_url} target="_blank">
             <Title>
-              {censored ? detail.title ?? "\u00a0" : "Good Picture 👍"}
+              {censored ? "Good Picture 👍" : detail.title ?? "\u00a0"}
             </Title>
           </ExternalLink>
         </Wrapper>
