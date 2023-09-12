@@ -15,7 +15,7 @@
   $: if (videoRef) {
     if (!$common.censored && Hls.isSupported()) {
       const hls = new Hls({
-        maxBufferLength: 60 * 60,
+        maxBufferLength: 60 * 2,
       });
       hls.loadSource(translateVideoURL(detail.video));
       hls.attachMedia(videoRef);
