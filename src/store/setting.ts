@@ -14,6 +14,7 @@ export const $rawSetting = persistentMap<RawSetting>("settings:", {
 });
 
 export const $setting = map<Setting>(rawSettingToSetting($rawSetting.get()));
+export const setting = $setting;
 
 $setting.listen((value) => {
   $rawSetting.set(settingToRawSetting(value));

@@ -12,12 +12,6 @@ export default defineConfig({
     service: sharpImageService(),
   },
   vite: {
-    legacy: {
-      buildSsrCjsExternalHeuristics: !isDev,
-    },
-    ssr: {
-      noExternal: ["styled-components"],
-    },
     optimizeDeps: {
       exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
     },
