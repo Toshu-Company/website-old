@@ -6,6 +6,8 @@ import Toggle from "./Toggle.svelte";
 export const MODAL_ID = random();
 
 const root = Astro.url.pathname.split('/')[1];
+
+export const prerender = true;
 ---
 
 <BaseModal id={MODAL_ID}>
