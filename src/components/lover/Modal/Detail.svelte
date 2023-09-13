@@ -20,6 +20,8 @@
       hls.loadSource(translateVideoURL(detail.video));
       hls.attachMedia(videoRef);
       videoRef.focus();
+    } else if (videoRef.canPlayType("application/vnd.apple.mpegurl")) {
+      videoRef.src = translateVideoURL(detail.video);
     } else {
       videoRef.src =
         "https://file-examples.com/storage/fe7e31ec4b64ff77da87142/2017/04/file_example_MP4_480_1_5MG.mp4";
