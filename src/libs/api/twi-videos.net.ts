@@ -172,7 +172,7 @@ export namespace Extended {
   export function isExtendedVideoDetail(
     videoDetail: VideoDetail | VideoDetailExtend
   ): videoDetail is VideoDetailExtend {
-    return "created_at" in videoDetail;
+    return "id" in videoDetail;
   }
 
   export interface VideoDetailExtend {

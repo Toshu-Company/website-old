@@ -2,9 +2,14 @@
 import Container from "../../../components/Container.astro";
 import Layout from "../../../layouts/twitter/Layout.astro";
 import Content from ".";
+import { getProvider } from "./route";
+
+export { getStaticPaths } from "./route";
+
+const { site } = Astro.params;
 ---
 
 <Layout title="Welcome to Twitter." />
 <Container>
-  <Content provider={"TwiVideoNetProvider"} client:only="react" />
+  <Content provider={getProvider(site!)} client:only="react" />
 </Container>

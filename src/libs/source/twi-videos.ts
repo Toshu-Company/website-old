@@ -27,7 +27,7 @@ export class TwiVideosNetProvider extends Twitter {
       title: detail.title,
       user: detail.uploader,
       user_url: detail.uploader_url,
-      video: detail.video[1],
+      video: detail.video?.[1] ?? detail.url[1],
       thumbnail: detail.thumbnails[1].url,
       original: detail.webpage_url,
     };
