@@ -1,21 +1,18 @@
 import { keyframes, styled } from "styled-components";
 import Image from "../../Image";
 import { useEffect, useState } from "react";
-import type { Extended, VideoDetail } from "../../../libs/api/twi-videos.net";
-import { TwiVideosNet } from "../../../libs/api";
 import Modal from "../Modal";
 import { $setting } from "../../../store/setting";
 import Loading from "../../../assets/loading.jpg";
+import type { TwitterVideo } from "../../../libs/source/twitter";
 
 type Props = {
-  videoId: string;
+  detail: TwitterVideo | Promise<TwitterVideo>;
   click?: () => void;
 };
 
 export default function Item(props: Props) {
-  const [detail, setDetail] = useState<
-    VideoDetail | Extended.VideoDetailExtend
-  >();
+  const [detail, setDetail] = useState<TwitterVideo>();
   const [modal, setModal] = useState<boolean>(false);
   const [censored, setCensored] = useState<boolean>($setting.get().censored);
 
@@ -26,8 +23,12 @@ export default function Item(props: Props) {
   }, []);
 
   useEffect(() => {
-    TwiVideosNet.getDetail(props.videoId).then((res) => setDetail(res));
-  }, [props.videoId]);
+    if (props.detail instanceof Promise) {
+      props.detail.then((res) => setDetail(res));
+    } else {
+      setDetail(props.detail);
+    }
+  }, [props.detail]);
 
   return (
     <>
@@ -35,24 +36,20 @@ export default function Item(props: Props) {
         <ImageWrapper>
           {censored ? (
             <RoundedImage src={Loading.src} fill alt={"article"} />
-          ) : detail?.thumbnails[1].url ? (
-            <RoundedImage
-              src={detail?.thumbnails[1].url}
-              fill
-              alt={"article"}
-            />
+          ) : detail ? (
+            <RoundedImage src={detail.thumbnail} fill alt={"article"} />
           ) : (
             <Gradient />
           )}
         </ImageWrapper>
         <TextWrapper>
-          <Text>{detail?.uploader ?? "\u00a0"}</Text>
+          <Text>{detail?.user ?? "\u00a0"}</Text>
         </TextWrapper>
       </Wrapper>
       {modal && detail && (
         <Modal.Detail
           close={() => setModal(false)}
-          id={props.videoId}
+          id={detail.id}
           detail={detail}
         />
       )}

@@ -2,14 +2,15 @@ import { styled } from "styled-components";
 import { useState } from "react";
 import Modal from "../../Modal";
 import Favorite from "../Content/Favorite";
-import { Extended, VideoDetail } from "../../../libs/api/twi-videos.net";
+import { Extended, type VideoDetail } from "../../../libs/api/twi-videos.net";
 import { $setting as $twitter } from "../../../store/twitter/setting";
 import { $setting as $common } from "../../../store/setting";
+import type { TwitterVideo } from "../../../libs/source/twitter";
 
 type Props = {
   close: () => void;
-  id: string;
-  detail: VideoDetail | Extended.VideoDetailExtend;
+  id?: string;
+  detail: TwitterVideo;
 };
 
 export default function Detail({ close, id, detail }: Props) {
@@ -31,27 +32,17 @@ export default function Detail({ close, id, detail }: Props) {
         <Wrapper>
           <Video controls autoFocus loop={loop} autoPlay={autoPlay}>
             <source
-              src={
-                censored
-                  ? "https://youtu.be/0bIRwBpBcZQ"
-                  : Extended.isExtendedVideoDetail(detail)
-                  ? detail.url
-                  : detail.url[1]
-              }
+              src={censored ? "https://youtu.be/0bIRwBpBcZQ" : detail.video}
               type="video/mp4"
             />
           </Video>
           <TopRow>
             <User>
-              <a href={`/twitter/user?user=${detail.uploader_id}`}>
-                {detail.uploader}
-              </a>
+              <a href={`/twitter/user?user=${detail.user_id}`}>{detail.user}</a>
             </User>
-            <Menu>
-              <Favorite videoId={id} />
-            </Menu>
+            <Menu>{id && <Favorite id={id} />}</Menu>
           </TopRow>
-          <ExternalLink href={detail.webpage_url} target="_blank">
+          <ExternalLink href={detail.original} target="_blank">
             <Title>{detail.title}</Title>
           </ExternalLink>
         </Wrapper>

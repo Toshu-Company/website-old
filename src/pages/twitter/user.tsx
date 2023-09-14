@@ -1,14 +1,19 @@
 import styled from "styled-components";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { SearchResultVideo } from "../../libs/api/twi-videos.net";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useIntersectionObserver from "../../libs/observer";
-import { TwiVideosNet } from "../../libs/api";
 import Content from "../../components/twitter/Content";
+import type { List, TwitterVideo } from "../../libs/source/twitter";
+import { Providers } from "../../libs/source";
 
-export default function Index() {
+interface Props {
+  provider: keyof typeof Providers;
+}
+
+export default function Index(props: Props) {
+  const provider = useMemo(() => new Providers[props.provider](), []);
   const [user, setUser] = useState<string>("");
 
-  const [videos, setVideos] = useState<SearchResultVideo[]>([]);
+  const [videos, setVideos] = useState<List<TwitterVideo>["videos"]>([]);
   const [page, setPage] = useState<number>(1);
   const [observe, unobserve] = useIntersectionObserver(
     () => setPage((page) => page + 1),
@@ -18,11 +23,20 @@ export default function Index() {
   );
 
   const fetch = useCallback(
-    async (user: string | null, page: number, videos: SearchResultVideo[]) => {
+    async (
+      user: string | null,
+      page: number,
+      videos: List<TwitterVideo>["videos"]
+    ) => {
       if (user) {
-        TwiVideosNet.getSearchUser(user, page).then((res) => {
-          setVideos(videos.concat(res.videos));
-        });
+        provider
+          .searchVideoList(user, page)
+          .then((res) => {
+            setVideos(videos.concat(res.videos));
+          })
+          .catch((e) => {
+            alert(e);
+          });
       }
     },
     []
@@ -60,8 +74,7 @@ export default function Index() {
     <>
       <Wrapper>
         <Content.Container>
-          {videos &&
-            videos.map((v, i) => <Content.Item key={i} videoId={v.id} />)}
+          {videos && videos.map((v, i) => <Content.Item key={i} detail={v} />)}
           <Intersection
             id="intersection"
             ref={target}

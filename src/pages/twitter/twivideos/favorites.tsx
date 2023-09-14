@@ -1,8 +1,8 @@
 import { useStore } from "@nanostores/react";
 import styled from "styled-components";
-import { $favorite } from "../../store/twitter/favorite";
-import Content from "../../components/twitter/Content";
-import { Providers } from "../../libs/source";
+import { $favorite } from "../../../store/twitter/favorite";
+import Content from "../../../components/twitter/Content";
+import { Providers } from "../../../libs/source";
 import { useMemo } from "react";
 
 interface Props {

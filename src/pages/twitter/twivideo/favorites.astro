@@ -1,0 +1,10 @@
+---
+import Container from "../../../components/Container.astro";
+import Layout from "../../../layouts/twitter/Layout.astro";
+import Content from "./favorites";
+---
+
+<Layout title="Welcome to Twitter." />
+<Container>
+  <Content provider={"TwiVideoNetProvider"} client:only="react" />
+</Container>

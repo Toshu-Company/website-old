@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import useIntersectionObserver from "../../libs/observer";
-import Content from "../../components/twitter/Content";
-import type { List, TwitterVideo } from "../../libs/source/twitter";
-import { Providers } from "../../libs/source";
+import useIntersectionObserver from "../../../libs/observer";
+import Content from "../../../components/twitter/Content";
+import type { List, TwitterVideo } from "../../../libs/source/twitter";
+import { Providers } from "../../../libs/source";
 
 interface Props {
   provider: keyof typeof Providers;
@@ -11,7 +11,7 @@ interface Props {
 
 export default function Index(props: Props) {
   const provider = useMemo(() => new Providers[props.provider](), []);
-  const [search, setSearch] = useState<string>("");
+  const [user, setUser] = useState<string>("");
 
   const [videos, setVideos] = useState<List<TwitterVideo>["videos"]>([]);
   const [page, setPage] = useState<number>(1);
@@ -24,29 +24,26 @@ export default function Index(props: Props) {
 
   const fetch = useCallback(
     async (
-      search: string | null,
+      user: string | null,
       page: number,
       videos: List<TwitterVideo>["videos"]
-    ) =>
-      new Promise((resolve) => {
-        if (search) {
-          provider.searchVideoList(search, page).then((res) => {
+    ) => {
+      if (user) {
+        provider
+          .searchVideoList(user, page)
+          .then((res) => {
             setVideos(videos.concat(res.videos));
-            resolve(videos.concat(res.videos));
+          })
+          .catch((e) => {
+            alert(e);
           });
-        } else {
-          provider.getVideoList(page).then((res) => {
-            setVideos(videos.concat(res.videos));
-            resolve(videos.concat(res.videos));
-          });
-        }
-      }),
+      }
+    },
     []
   );
 
   const target = useRef(null);
-  const prevSearch = useRef<string | null>(null);
-  const loading = useRef<boolean>(true);
+  const prevUser = useRef<string | null>(null);
 
   useEffect(() => {
     const targetNode = target.current;
@@ -54,37 +51,30 @@ export default function Index(props: Props) {
     return () => {
       if (targetNode) unobserve(targetNode);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setSearch(params.get("search") ?? "");
+    setUser(params.get("user") ?? "");
   }, []);
 
   useEffect(() => {
-    if (prevSearch.current !== search) {
+    if (prevUser.current !== user) {
       setPage(1);
-      prevSearch.current = search;
-      fetch(search, 1, []).then(() => {
-        console.log("fetch");
-        loading.current = false;
-      });
+      prevUser.current = user;
+      fetch(user, 1, []);
     } else {
-      fetch(search, page, videos).then(() => {
-        console.log("fetch");
-        loading.current = false;
-      });
+      fetch(user, page, videos);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search]);
+  }, [page, user]);
 
   return (
     <>
       <Wrapper>
         <Content.Container>
-          {loading.current
-            ? [...Array(20)].map((_, i) => <Content.Skeleton key={i} />)
-            : videos.map((v, i) => <Content.Item key={i} detail={v} />)}
+          {videos && videos.map((v, i) => <Content.Item key={i} detail={v} />)}
           <Intersection
             id="intersection"
             ref={target}

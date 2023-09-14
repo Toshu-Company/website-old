@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import useIntersectionObserver from "../../libs/observer";
-import Content from "../../components/twitter/Content";
-import type { List, TwitterVideo } from "../../libs/source/twitter";
-import { Providers } from "../../libs/source";
+import useIntersectionObserver from "../../../libs/observer";
+import Content from "../../../components/twitter/Content";
+import type { List, TwitterVideo } from "../../../libs/source/twitter";
+import { Providers } from "../../../libs/source";
 
 interface Props {
   provider: keyof typeof Providers;

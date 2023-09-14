@@ -6,7 +6,7 @@ import HeartIcon from "../../../assets/heart.svg";
 import HeartFillIcon from "../../../assets/heart-fill.svg";
 
 type Props = {
-  videoId: string;
+  id: string;
 };
 
 export default function Favorite(props: Props) {
@@ -15,17 +15,15 @@ export default function Favorite(props: Props) {
   return (
     <ImageButton
       onClick={() => {
-        if (favorite.includes(props.videoId)) {
-          $favorite.set(favorite.filter((id) => id !== props.videoId));
+        if (favorite.includes(props.id)) {
+          $favorite.set(favorite.filter((id) => id !== props.id));
         } else {
-          $favorite.set(favorite.concat(props.videoId));
+          $favorite.set(favorite.concat(props.id));
         }
       }}
     >
       <Image
-        src={
-          favorite.includes(props.videoId) ? HeartFillIcon.src : HeartIcon.src
-        }
+        src={favorite.includes(props.id) ? HeartFillIcon.src : HeartIcon.src}
         width={[24, { responsive: 768, size: 20 }]}
         alt="Favorites"
         responsive
