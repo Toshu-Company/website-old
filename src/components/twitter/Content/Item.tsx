@@ -4,9 +4,13 @@ import { useEffect, useState } from "react";
 import Modal from "../Modal";
 import { $setting } from "../../../store/setting";
 import Loading from "../../../assets/loading.jpg";
-import type { TwitterVideo } from "../../../libs/source/twitter";
+import type {
+  TwitterVideo,
+  VirtualTwitter,
+} from "../../../libs/source/twitter";
 
 type Props = {
+  provider: VirtualTwitter;
   detail: TwitterVideo | Promise<TwitterVideo>;
   click?: () => void;
 };
@@ -48,6 +52,7 @@ export default function Item(props: Props) {
       </Wrapper>
       {modal && detail && (
         <Modal.Detail
+          provider={props.provider}
           close={() => setModal(false)}
           id={detail.id}
           detail={detail}

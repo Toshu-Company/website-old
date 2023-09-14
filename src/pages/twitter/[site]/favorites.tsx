@@ -11,7 +11,7 @@ interface Props {
 
 export default function Index(props: Props) {
   const provider = useMemo(() => new Providers[props.provider](), []);
-  const favorite = useStore($favorite);
+  const favorite = useStore(provider.favorite.favorite);
 
   return (
     <>
@@ -19,7 +19,11 @@ export default function Index(props: Props) {
         <Content.Container>
           {favorite &&
             favorite.map((v, i) => (
-              <Content.Item key={i} detail={provider.getVideo(v)} />
+              <Content.Item
+                provider={provider}
+                key={i}
+                detail={provider.getVideo(v)}
+              />
             ))}
         </Content.Container>
       </Wrapper>

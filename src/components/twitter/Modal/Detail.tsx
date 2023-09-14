@@ -2,18 +2,21 @@ import { styled } from "styled-components";
 import { useState } from "react";
 import Modal from "../../Modal";
 import Favorite from "../Content/Favorite";
-import { Extended, type VideoDetail } from "../../../libs/api/twi-videos.net";
 import { $setting as $twitter } from "../../../store/twitter/setting";
 import { $setting as $common } from "../../../store/setting";
-import type { TwitterVideo } from "../../../libs/source/twitter";
+import type {
+  TwitterVideo,
+  VirtualTwitter,
+} from "../../../libs/source/twitter";
 
 type Props = {
   close: () => void;
   id?: string;
   detail: TwitterVideo;
+  provider: VirtualTwitter;
 };
 
-export default function Detail({ close, id, detail }: Props) {
+export default function Detail({ close, id, detail, provider }: Props) {
   const [censored, setCensored] = useState<boolean>();
   const [autoPlay, setAutoPlay] = useState<boolean>($twitter.get().autoPlay);
   const [loop, setLoop] = useState<boolean>($twitter.get().loop);
@@ -40,7 +43,7 @@ export default function Detail({ close, id, detail }: Props) {
             <User>
               <a href={`/twitter/user?user=${detail.user_id}`}>{detail.user}</a>
             </User>
-            <Menu>{id && <Favorite id={id} />}</Menu>
+            <Menu>{id && <Favorite provider={provider} id={id} />}</Menu>
           </TopRow>
           <ExternalLink href={detail.original} target="_blank">
             <Title>{detail.title}</Title>

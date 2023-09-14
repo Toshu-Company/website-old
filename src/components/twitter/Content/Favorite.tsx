@@ -1,16 +1,18 @@
 import { styled } from "styled-components";
 import { useStore } from "@nanostores/react";
 import Image from "../../Image";
-import { $favorite } from "../../../store/lover/favorite";
 import HeartIcon from "../../../assets/heart.svg";
 import HeartFillIcon from "../../../assets/heart-fill.svg";
+import type { VirtualTwitter } from "../../../libs/source/twitter";
 
 type Props = {
+  provider: VirtualTwitter;
   id: string;
 };
 
 export default function Favorite(props: Props) {
-  const favorite = useStore($favorite);
+  const $favorite = props.provider.favorite.favorite;
+  const favorite = useStore(props.provider.favorite.favorite);
 
   return (
     <ImageButton

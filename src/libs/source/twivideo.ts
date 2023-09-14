@@ -1,25 +1,35 @@
 import { TwiVideoNet } from "../api";
 import {
   Twitter,
-  type List,
-  type TwitterVideo,
   type TwitterVideoList,
+  FavoriteStore,
+  type TwitterVideo,
 } from "./twitter";
 
 export class TwiVideoNetProvider extends Twitter {
+  public readonly favorite = new FavoriteStore("twivideo");
   perPage = 45;
 
-  async getVideoList(page: number): Promise<TwitterVideoList> {
+  override async getVideo(id: string): Promise<TwitterVideo> {
+    return JSON.parse(atob(id));
+  }
+
+  override async getVideoList(page: number): Promise<TwitterVideoList> {
     const result = await TwiVideoNet.getIndex(
       (page - 1) * this.perPage,
       this.perPage
     );
     return {
-      videos: result.map((video) => ({
-        video: video.video,
-        thumbnail: video.thumbnail,
-        original: video.twitter,
-      })),
+      videos: result
+        .map((video) => ({
+          video: video.video,
+          thumbnail: video.thumbnail,
+          original: video.twitter,
+        }))
+        .map((video) => ({
+          ...video,
+          id: btoa(JSON.stringify(video)),
+        })),
       count: -1,
     };
   }

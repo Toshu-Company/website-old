@@ -74,7 +74,10 @@ export default function Index(props: Props) {
     <>
       <Wrapper>
         <Content.Container>
-          {videos && videos.map((v, i) => <Content.Item key={i} detail={v} />)}
+          {videos &&
+            videos.map((v, i) => (
+              <Content.Item provider={provider} key={i} detail={v} />
+            ))}
           <Intersection
             id="intersection"
             ref={target}

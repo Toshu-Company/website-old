@@ -68,6 +68,25 @@ export async function getIndex(page = 1): Promise<SearchResult> {
   return data;
 }
 
+/**
+ * Fetches search results from the twi-videos API based on the provided query and page number.
+ * @param query - The search query string.
+ * @param page - The page number of the search results to fetch. Defaults to 1.
+ * @returns A Promise that resolves to the search results data.
+ */
+export async function getSearch(
+  query: string,
+  page = 1
+): Promise<SearchResult> {
+  const data = await fetchAPI(
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/uraakalist/search`,
+    {
+      query: { query, page },
+    }
+  );
+  return data;
+}
+
 export interface SearchResult {
   tweets: SearchResultVideo[];
   users: any[];

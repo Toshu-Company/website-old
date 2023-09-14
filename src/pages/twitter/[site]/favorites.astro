@@ -7,9 +7,12 @@ import { getProvider } from "./route";
 export { getStaticPaths } from "./route";
 
 const { site } = Astro.params;
+
+const provider = getProvider(site!);
+if (!provider) return Astro.redirect("/twitter");
 ---
 
 <Layout title="Welcome to Twitter." />
 <Container>
-  <Content provider={getProvider(site!)} client:only="react" />
+  <Content provider={provider!} client:only="react" />
 </Container>

@@ -1,3 +1,6 @@
+import { persistentAtom } from "@nanostores/persistent";
+import { atom, type WritableAtom } from "nanostores";
+
 export interface TwitterOptions {}
 
 export interface TwitterVideo {
@@ -18,7 +21,27 @@ export interface List<T> {
 
 export interface TwitterVideoList extends List<TwitterVideo> {}
 
+export class FavoriteStore {
+  private $rawFavorite: WritableAtom<string>;
+  private $favorite: WritableAtom<string[]>;
+
+  constructor(key: string) {
+    this.$rawFavorite = persistentAtom<string>(`twitter:${key}:favorite`, "[]");
+    this.$favorite = atom<string[]>(JSON.parse(this.$rawFavorite.get()));
+
+    this.$favorite.listen((value) => {
+      this.$rawFavorite.set(JSON.stringify(value));
+    });
+  }
+
+  get favorite() {
+    return this.$favorite;
+  }
+}
+
 export abstract class VirtualTwitter {
+  public abstract readonly favorite: FavoriteStore;
+
   // constructor(options: TwitterOptions) {}
   abstract getVideo(id: string): Promise<TwitterVideo>;
 
@@ -48,6 +71,8 @@ export abstract class VirtualTwitter {
 }
 
 export class Twitter extends VirtualTwitter {
+  public readonly favorite = new FavoriteStore("default");
+
   // constructor(options: TwitterOptions) {
   //   super(options);
   // }

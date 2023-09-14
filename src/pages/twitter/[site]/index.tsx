@@ -30,10 +30,15 @@ export default function Index(props: Props) {
     ) =>
       new Promise((resolve) => {
         if (search) {
-          provider.searchVideoList(search, page).then((res) => {
-            setVideos(videos.concat(res.videos));
-            resolve(videos.concat(res.videos));
-          });
+          provider
+            .searchVideoList(search, page)
+            .then((res) => {
+              setVideos(videos.concat(res.videos));
+              resolve(videos.concat(res.videos));
+            })
+            .catch((err) => {
+              alert(err);
+            });
         } else {
           provider.getVideoList(page).then((res) => {
             setVideos(videos.concat(res.videos));
@@ -84,7 +89,9 @@ export default function Index(props: Props) {
         <Content.Container>
           {loading.current
             ? [...Array(20)].map((_, i) => <Content.Skeleton key={i} />)
-            : videos.map((v, i) => <Content.Item key={i} detail={v} />)}
+            : videos.map((v, i) => (
+                <Content.Item provider={provider} key={i} detail={v} />
+              ))}
           <Intersection
             id="intersection"
             ref={target}

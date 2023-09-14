@@ -1,0 +1,164 @@
+---
+import type { ImageMetadata } from "astro";
+
+import Image from "../../components/Image";
+
+import SearchIcon from "../../assets/search.svg";
+import SettingIcon from "../../assets/setting.svg";
+import HeartIcon from "../../assets/heart.svg";
+
+import Modal, { MODAL_ID } from "../../components/Settings/Modal.astro";
+
+interface Props {
+  icon: ImageMetadata;
+  name: string;
+}
+
+export const prerender = true;
+
+const rootpath = Astro.url.pathname.split("/")[2];
+
+const { icon, name } = Astro.props;
+---
+
+<div class="wrapper">
+  <div class="container">
+    <a href="/twitter">
+      <Image
+        src={icon.src}
+        width={[40, { responsive: 768, size: 32 }]}
+        height={[40, { responsive: 768, size: 32 }]}
+        alt={name}
+        responsive
+        client:load
+      />
+    </a>
+    <div class="row">
+      <form action="" method="get">
+        <div class="search">
+          <input type="text" name="search" placeholder="Search..." />
+          <button>
+            <Image
+              src={SearchIcon.src}
+              width={[20, { responsive: 768, size: 16 }]}
+              height={[20, { responsive: 768, size: 16 }]}
+              alt="Search"
+              responsive
+              client:idle
+            />
+          </button>
+        </div>
+      </form>
+      <button onclick={`showModal('${MODAL_ID}')`}>
+        <Image
+          src={SettingIcon.src}
+          width={[24, { responsive: 768, size: 20 }]}
+          height={[24, { responsive: 768, size: 20 }]}
+          alt="Setting"
+          responsive
+          client:idle
+        />
+      </button>
+      <a href={`/twitter/${rootpath}/favorites`} class="button">
+        <Image
+          src={HeartIcon.src}
+          width={[24, { responsive: 768, size: 20 }]}
+          height={[24, { responsive: 768, size: 20 }]}
+          alt="Favorites"
+          responsive
+          client:idle
+        />
+      </a>
+    </div>
+    <Modal modalId="settings" />
+  </div>
+</div>
+<style lang="scss">
+  .wrapper {
+    width: 100%;
+    height: 60px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #1e1e1e;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .container {
+    max-width: 1300px;
+    width: 90%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .search {
+    width: 200px;
+    height: 40px;
+    border-radius: 8px;
+    padding: 0 10px;
+    gap: 10px;
+
+    display: flex;
+    align-items: center;
+
+    background-color: #202327;
+    color: white;
+
+    &::placeholder {
+      color: #8899a6;
+    }
+
+    @media (max-width: 768px) {
+      width: 150px;
+      height: 30px;
+
+      font-size: 14px;
+    }
+  }
+
+  input {
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+
+    background-color: transparent;
+  }
+
+  button,
+  a.button {
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-bottom: 2px solid #1da1f2;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  form {
+    display: flex;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      gap: 10px;
+    }
+  }
+</style>

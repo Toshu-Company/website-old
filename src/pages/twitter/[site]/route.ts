@@ -8,7 +8,7 @@ export function getStaticPaths() {
   ];
 }
 
-export function getProvider(site: string): keyof typeof Providers {
+export function getProvider(site: string): keyof typeof Providers | undefined {
   switch (site) {
     case "twivideos":
       return "TwiVideosNetProvider";
@@ -17,6 +17,7 @@ export function getProvider(site: string): keyof typeof Providers {
     case "uraakalist":
       return "UraakaListComProvider";
     default:
-      throw new Error(`Unknown site: ${site}`);
+      return undefined;
+    //   throw new Error(`Unknown site: ${site}`);
   }
 }
