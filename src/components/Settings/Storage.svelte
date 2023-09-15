@@ -38,9 +38,15 @@
     let parsedData = JSON.parse(data);
 
     for (let key in parsedData) {
-      let existing = localStorage.getItem(key) ?? ({} as any);
-      merge(existing, parsedData[key]);
-      localStorage.setItem(key, existing);
+      let existing = localStorage.getItem(key) ?? "";
+      try {
+        existing = JSON.parse(existing);
+        const parsed = JSON.parse(parsedData[key]);
+        merge(existing, parsed);
+        localStorage.setItem(key, existing);
+      } catch (e) {
+        localStorage.setItem(key, parsedData[key]);
+      }
     }
 
     alert("Data merged!");
