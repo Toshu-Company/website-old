@@ -2,6 +2,7 @@
 import { random } from "../../libs/random";
 import BaseModal from "../Modal/Default.astro";
 import Toggle from "./Toggle.svelte";
+import Storage from "./Storage.svelte";
 
 export const MODAL_ID = random();
 
@@ -35,9 +36,9 @@ export const prerender = true;
                 <Toggle label="Filter" store={{ key: "filter", store: "hitomi" }} client:idle />
             </div>
         }
+        <div class="splitter" />
+        <Storage client:idle />
     </div>
-
-    
 </BaseModal>
 <style>
     .wrapper {

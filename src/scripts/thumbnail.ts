@@ -66,11 +66,11 @@ class Worker {
 
 const setFile = async (key: string, blob: any) => {
   const dataUrl = await blobToDataURL(blob);
-  localStorage.setItem(key, dataUrl);
+  localStorage.setItem(`cache:${key}`, dataUrl);
 };
 
 const getFile = async (key: string) => {
-  const dataUrl = localStorage.getItem(key);
+  const dataUrl = localStorage.getItem(`cache:${key}`);
   if (dataUrl) {
     return dataURLtoBlob(dataUrl);
   }
@@ -83,7 +83,7 @@ export const translateVideoURL = (video: string) => {
 
 export const getThumbnail = async (video: string) => {
   if (typeof window !== "undefined") {
-    const cached = await getFile(`thumbnail:${video}`);
+    const cached = await getFile(video);
     if (cached) {
       return URL.createObjectURL(cached);
     }
@@ -117,7 +117,7 @@ export const getThumbnail = async (video: string) => {
     return data;
   }
   const blob: any = new Blob([data], { type: "image/jpeg" });
-  setFile(`thumbnail:${video}`, blob);
+  setFile(video, blob);
   return URL.createObjectURL(blob);
 };
 
