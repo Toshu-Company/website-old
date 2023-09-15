@@ -27,6 +27,9 @@ export const prerender = true;
                 <div class="grow">
                     <Toggle label="Loop" store={{ key: "loop", store: "twitter" }} client:idle />
                 </div>
+                <div class="grow">
+                    <Toggle label="Mute" store={{ key: "mute", store: "twitter" }} client:idle />
+                </div>
             </div>
         }
         { root === 'hitomi' &&

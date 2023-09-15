@@ -8,6 +8,7 @@ import type {
   TwitterVideo,
   VirtualTwitter,
 } from "../../../libs/source/twitter";
+import { useStore } from "@nanostores/react";
 
 type Props = {
   close: () => void;
@@ -20,6 +21,7 @@ export default function Detail({ close, id, detail, provider }: Props) {
   const [censored, setCensored] = useState<boolean>();
   const [autoPlay, setAutoPlay] = useState<boolean>($twitter.get().autoPlay);
   const [loop, setLoop] = useState<boolean>($twitter.get().loop);
+  const setting = useStore($twitter);
 
   $common.listen((setting) => {
     setCensored(setting.censored);
@@ -33,7 +35,13 @@ export default function Detail({ close, id, detail, provider }: Props) {
     <>
       <Modal.Default maxWidth={1200} close={close}>
         <Wrapper>
-          <Video controls autoFocus loop={loop} autoPlay={autoPlay}>
+          <Video
+            controls
+            autoFocus
+            loop={loop}
+            autoPlay={autoPlay}
+            muted={setting.mute}
+          >
             <source
               src={censored ? "https://youtu.be/0bIRwBpBcZQ" : detail.video}
               type="video/mp4"
