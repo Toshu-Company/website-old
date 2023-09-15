@@ -65,7 +65,9 @@
 
   function merge(a: any, b: any) {
     for (let key in b) {
-      if (typeof b[key] === "object") {
+      if (Array.isArray(b[key])) {
+        a[key] = [...a[key], ...b[key]];
+      } else if (typeof b[key] === "object") {
         merge(a[key], b[key]);
       } else {
         a[key] = b[key];
