@@ -3,7 +3,9 @@
     console.log("Exporting data...");
 
     let data: Record<string, any> = {};
-    for (let key in localStorage) {
+    for (let i = 0; i < localStorage.length; i++) {
+      let key = localStorage.key(i);
+      if (!key) continue;
       if (key.startsWith("cache:")) continue;
       data[key] = localStorage.getItem(key);
     }
@@ -42,8 +44,8 @@
       try {
         existing = JSON.parse(existing);
         const parsed = JSON.parse(parsedData[key]);
-        merge(existing, parsed);
-        localStorage.setItem(key, existing);
+        existing = merge(existing, parsed);
+        localStorage.setItem(key, JSON.stringify(existing));
       } catch (e) {
         localStorage.setItem(key, parsedData[key]);
       }
@@ -64,15 +66,15 @@
   }
 
   function merge(a: any, b: any) {
+    if (Array.isArray(a) && Array.isArray(b)) return a.concat(b);
     for (let key in b) {
-      if (Array.isArray(b[key])) {
-        a[key] = [...a[key], ...b[key]];
-      } else if (typeof b[key] === "object") {
+      if (typeof b[key] === "object") {
         merge(a[key], b[key]);
       } else {
         a[key] = b[key];
       }
     }
+    return a;
   }
 </script>
 
