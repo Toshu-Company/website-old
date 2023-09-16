@@ -5,6 +5,7 @@
   import Hls from "hls.js";
   import { Yatv } from "../../../libs/api";
   import { MIRROR_URL } from "../../../libs/api/yatv";
+  import Favorite from "../Content/Favorite.svelte";
 
   let videoRef: HTMLVideoElement;
 
@@ -58,7 +59,7 @@
     </video>
     <div class="top-row">
       <div class="menu">
-        <!-- <Favorite videoId={info.url} /> -->
+        <Favorite id={info.url} />
       </div>
     </div>
     <a href="/test" class="external-link">
