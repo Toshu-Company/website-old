@@ -1,0 +1,11 @@
+---
+import Container from "../../components/Container.astro";
+import Layout from "../../layouts/twitter/Layout.astro";
+import Content from "./favorites.svelte";
+---
+
+<Layout title="Welcome to Lover000." />
+    <Container>
+        <Content client:only="svelte" />
+    </Container>
+</Layout>

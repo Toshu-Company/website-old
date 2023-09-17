@@ -15,6 +15,10 @@
       .then((blob) => {
         imageUrl = URL.createObjectURL(blob);
       });
+  } else {
+    Yatv.getVideo(videoInfo.url).then((res) => {
+      videoInfo.thumbnail = res.thumbnail;
+    });
   }
 </script>
 
