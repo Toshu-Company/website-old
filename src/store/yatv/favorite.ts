@@ -1,7 +1,7 @@
 import { persistentAtom } from "@nanostores/persistent";
 import { atom } from "nanostores";
 
-export const $rawFavorite = persistentAtom<string>("lover:favorite", "[]");
+export const $rawFavorite = persistentAtom<string>("yatv:favorite", "[]");
 
 export const $favorite = atom<string[]>([
   ...new Set(JSON.parse($rawFavorite.get()) as string[]),
