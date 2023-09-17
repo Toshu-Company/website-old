@@ -4,6 +4,7 @@ import Layout from "../../../layouts/twitter/Layout.astro";
 import Content from ".";
 import { getProvider } from "./route";
 
+export const prerender = true;
 export { getStaticPaths } from "./route";
 
 const { site } = Astro.params;

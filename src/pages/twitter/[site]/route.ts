@@ -1,5 +1,7 @@
 import type { Providers } from "../../../libs/source";
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return [
     { params: { site: "twivideos" } },
