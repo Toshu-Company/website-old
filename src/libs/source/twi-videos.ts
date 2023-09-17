@@ -22,6 +22,7 @@ export class TwiVideosNetProvider extends Twitter {
         video: detail.url,
         thumbnail: detail.thumbnails[1].url,
         original: detail.webpage_url,
+        raw: detail,
       };
     }
     return {
@@ -33,6 +34,7 @@ export class TwiVideosNetProvider extends Twitter {
       video: detail.url[1],
       thumbnail: detail.thumbnails[1].url,
       original: detail.webpage_url,
+      raw: detail,
     };
   }
 

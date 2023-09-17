@@ -16,6 +16,7 @@ export class UraakaListComProvider extends Twitter {
       thumbnail: result.image ?? "",
       original: "",
       user: result.username,
+      raw: result,
     };
   }
 
@@ -29,6 +30,10 @@ export class UraakaListComProvider extends Twitter {
           id: video.id,
           original: video.url,
           thumbnail: video.thumbnail,
+          raw: {
+            index: video,
+            detail: res.raw,
+          },
         };
       }),
       count: -1,
@@ -48,6 +53,10 @@ export class UraakaListComProvider extends Twitter {
           id: video.id,
           original: video.url,
           thumbnail: video.thumbnail,
+          raw: {
+            index: video,
+            detail: res.raw,
+          },
         };
       }),
       count: -1,

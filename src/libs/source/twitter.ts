@@ -12,6 +12,7 @@ export interface TwitterVideo {
   video: string;
   thumbnail: string;
   original: string;
+  raw?: any;
 }
 
 export interface List<T> {

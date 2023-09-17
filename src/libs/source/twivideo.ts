@@ -25,6 +25,7 @@ export class TwiVideoNetProvider extends Twitter {
           video: video.video,
           thumbnail: video.thumbnail,
           original: video.twitter,
+          raw: video,
         }))
         .map((video) => ({
           ...video,
