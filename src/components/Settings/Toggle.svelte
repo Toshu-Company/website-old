@@ -2,6 +2,7 @@
   import * as Twitter from "../../store/twitter/setting";
   import * as Hitomi from "../../store/hitomi/setting";
   import * as Common from "../../store/setting";
+  import * as Lover from "../../store/lover/setting";
   import type { MapStore } from "nanostores";
 
   export let id: string | undefined = undefined;
@@ -19,6 +20,10 @@
         key: keyof Common.RawSetting;
         store: "common";
       }
+    | {
+        key: keyof Lover.RawSetting;
+        store: "lover";
+      }
     | undefined = undefined;
 
   const setting: MapStore | undefined = (() => {
@@ -29,6 +34,10 @@
         return Hitomi.$setting;
       case "common":
         return Common.$setting;
+      case "lover":
+        return Lover.$setting;
+      default:
+        throw new Error("store is undefined");
     }
   })();
 

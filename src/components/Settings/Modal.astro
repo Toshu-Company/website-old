@@ -17,6 +17,15 @@ export const prerender = true;
         <div class="toggle">
             <Toggle label="Censored" store={{ key: "censored", store: "common" }} client:idle />
         </div>
+        { root === 'lover' && 
+            <div class="splitter" />
+            <div class="category">Thumbnail</div>
+            <div class="group">
+                <div class="grow">
+                    <Toggle label="Show" store={{ key: "thumbnail", store: "lover" }} client:idle />
+                </div>
+            </div>
+        }
         { ['twitter', 'lover', 'yatv'].includes(root) &&
             <div class="splitter" />
             <div class="category">Video</div>

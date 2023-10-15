@@ -1,5 +1,6 @@
 <script lang="ts">
   import { setting as common } from "../../../store/setting";
+  import { setting } from "../../../store/lover/setting";
   import Loading from "../../../assets/loading.jpg";
   import { getThumbnail, translateVideoURL } from "../../../scripts/thumbnail";
   import { Lover } from "../../../libs/api";
@@ -26,7 +27,7 @@
   <div class="image-wrapper">
     {#if $common.censored}
       <img src={Loading.src} alt="Loading" />
-    {:else if imageUrl}
+    {:else if imageUrl && $setting.thumbnail}
       <img src={imageUrl} alt="Thumbnail" />
     {:else}
       <div class="gradient" />
