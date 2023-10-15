@@ -26,6 +26,7 @@ export default defineConfig({
   output: 'server',
   adapter: vercel({
     analytics: true,
+    functionPerRoute: false,
   }),
   // adapter: node({
   //   mode: 'standalone',
