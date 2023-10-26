@@ -1,3 +1,5 @@
+import { $setting } from "../../store/setting";
+
 /**
  * The properties for the fetchAPI function.
  */
@@ -27,6 +29,7 @@ async function fetchAPI(url: string, prop: Props = {}) {
     method: method,
     headers: {
       "Content-Type": "application/json",
+      "Cache-Control": $setting.get().nocache ? "no-cache" : "max-age=3600",
     },
     ...(method === "POST" && { body: JSON.stringify(body) }),
   });
