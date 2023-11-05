@@ -13,7 +13,7 @@ type Props = {
  * @param prop - The properties for the fetchAPI function.
  * @returns A Promise that resolves to the fetched data.
  */
-async function fetchAPI(url: string, prop: Props = {}) {
+async function fetchAPI(url: string, prop: Props = {}, parseJSON = true) {
   const query = prop.query ?? {};
   const body = prop.body ?? {};
   const method = prop.method ?? "GET";
@@ -36,6 +36,7 @@ async function fetchAPI(url: string, prop: Props = {}) {
     throw new Error("Failed to fetch API");
   }
 
+  if (!parseJSON) return res.text();
   const json = await res.json();
 
   return json;
@@ -60,6 +61,20 @@ export async function getIndex(
         type,
       },
     }
+  );
+  return data;
+}
+
+export async function mirror(url: string): Promise<string> {
+  const data = await fetchAPI(
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/twivideo/mirror`,
+    {
+      method: "POST",
+      body: {
+        url,
+      },
+    },
+    false
   );
   return data;
 }

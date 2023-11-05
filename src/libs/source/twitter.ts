@@ -69,6 +69,8 @@ export abstract class VirtualTwitter {
     keyword: string,
     page: number
   ): Promise<List<string>>;
+
+  abstract resolveVideo(url: string): Promise<string>;
 }
 
 export class Twitter extends VirtualTwitter {
@@ -109,5 +111,8 @@ export class Twitter extends VirtualTwitter {
   }
   searchVideoIdList(keyword: string, page: number): Promise<List<string>> {
     throw new Error("Method not implemented.");
+  }
+  async resolveVideo(url: string): Promise<string> {
+    return url;
   }
 }

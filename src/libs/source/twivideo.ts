@@ -34,4 +34,8 @@ export class TwiVideoNetProvider extends Twitter {
       count: -1,
     };
   }
+
+  override async resolveVideo(url: string): Promise<string> {
+    return await TwiVideoNet.mirror(url);
+  }
 }

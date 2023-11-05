@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../Modal";
 import Favorite from "../Content/Favorite";
 import { $setting as $twitter } from "../../../store/twitter/setting";
@@ -18,6 +18,7 @@ type Props = {
 };
 
 export default function Detail({ close, id, detail, provider }: Props) {
+  const [url, setUrl] = useState<string>();
   const [censored, setCensored] = useState<boolean>();
   const [autoPlay, setAutoPlay] = useState<boolean>($twitter.get().autoPlay);
   const [loop, setLoop] = useState<boolean>($twitter.get().loop);
@@ -31,22 +32,33 @@ export default function Detail({ close, id, detail, provider }: Props) {
     setLoop(setting.loop);
   });
 
+  useEffect(() => {
+    provider.resolveVideo(detail.video).then((res) => {
+      console.log(res);
+      setUrl(res);
+    });
+  }, []);
+
   return (
     <>
       <Modal.Default maxWidth={1200} close={close}>
         <Wrapper>
-          <Video
-            controls
-            autoFocus
-            loop={loop}
-            autoPlay={autoPlay}
-            muted={setting.mute}
-          >
-            <source
-              src={censored ? "https://youtu.be/0bIRwBpBcZQ" : detail.video}
-              type="video/mp4"
-            />
-          </Video>
+          {url ? (
+            <Video
+              controls
+              autoFocus
+              loop={loop}
+              autoPlay={autoPlay}
+              muted={setting.mute}
+            >
+              <source
+                src={censored ? "https://youtu.be/0bIRwBpBcZQ" : url}
+                type="video/mp4"
+              />
+            </Video>
+          ) : (
+            <Video></Video>
+          )}
           <TopRow>
             <User>
               <a href={`/twitter/user?user=${detail.user_id}`}>{detail.user}</a>
