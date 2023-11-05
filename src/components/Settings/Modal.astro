@@ -16,6 +16,7 @@ export const prerender = true;
         <div class="category">Common</div>
         <div class="toggle">
             <Toggle label="Censored" store={{ key: "censored", store: "common" }} client:idle />
+            <Toggle label="No Cache" store={{ key: "nocache", store: "common" }} client:idle />
         </div>
         { root === 'lover' && 
             <div class="splitter" />
