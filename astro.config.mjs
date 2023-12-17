@@ -19,6 +19,10 @@ export default defineConfig({
   integrations: [
     react(),
     svelte(),
+    compress({
+      // enable: !isDev,
+      enable: true,
+    }),
   ],
   output: 'server',
   adapter: vercel({
