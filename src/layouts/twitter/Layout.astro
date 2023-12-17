@@ -9,6 +9,8 @@ interface Props {
 }
 
 const { title } = Astro.props;
+
+export const prerender = true;
 ---
 
 <BaseLayout {title}>

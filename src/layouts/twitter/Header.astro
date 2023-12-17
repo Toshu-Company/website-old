@@ -14,8 +14,6 @@ interface Props {
   name: string;
 }
 
-export const prerender = true;
-
 const rootpath = Astro.url.pathname.split("/")[2];
 
 const { icon, name } = Astro.props;

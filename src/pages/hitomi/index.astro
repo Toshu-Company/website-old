@@ -1,11 +1,10 @@
 ---
 import Container from "../../components/Container.astro";
 import Layout from "../../layouts/hitomi/Layout.astro";
-import Content from ".";
+import Content from "./_index";
 ---
 
 <Layout title="Welcome to Hitomi." />
-    <Container>
-        <Content client:only="react" />
-    </Container>
-</Layout>
+<Container>
+  <Content client:only="react" />
+</Container>
