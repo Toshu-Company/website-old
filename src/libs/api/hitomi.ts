@@ -110,7 +110,7 @@ export type HitomiLanguage = (typeof HitomiLanguages)[number] | "all";
  * @returns A Promise that resolves to the fetched indexes.
  */
 export function getIndexes(page?: number, language?: HitomiLanguage) {
-  return fetchAPI("/", {
+  return fetchAPI(".", {
     query: {
       page,
       language,
@@ -130,7 +130,7 @@ export function getSearch(
   page?: number,
   language?: HitomiLanguage
 ) {
-  return fetchAPI("/", {
+  return fetchAPI(".", {
     query: {
       query,
       page,
