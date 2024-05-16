@@ -130,7 +130,7 @@ export function getSearch(
   page?: number,
   language?: HitomiLanguage
 ) {
-  return fetchAPI("/search", {
+  return fetchAPI("/", {
     query: {
       query,
       page,
@@ -145,7 +145,7 @@ export function getSearch(
  * @returns A Promise that resolves to the autocomplete suggestions.
  */
 export function getAutocomplete(query: string) {
-  return fetchAPI("/search/suggest", {
+  return fetchAPI("/suggest", {
     query: {
       query,
     },
