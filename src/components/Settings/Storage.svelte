@@ -1,4 +1,40 @@
 <script lang="ts">
+  function downloadFile(filename: string, text: string) {
+    var element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+    );
+    element.setAttribute("download", filename);
+
+    element.style.display = "none";
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
+  function openFile() {
+    return new Promise<string>((resolve, reject) => {
+      var input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.onchange = (e) => {
+        var file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return reject("No file selected");
+
+        var reader = new FileReader();
+        reader.onload = (e) => {
+          var contents = e.target?.result as string;
+          resolve(contents);
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    });
+  }
+
   function exportData() {
     console.log("Exporting data...");
 
@@ -10,15 +46,18 @@
       data[key] = localStorage.getItem(key);
     }
 
-    navigator.clipboard.writeText(JSON.stringify(data));
+    // navigator.clipboard.writeText(JSON.stringify(data));
+    downloadFile(`data-${Date.now()}.json`, JSON.stringify(data));
 
-    alert("Data copied to clipboard!");
+    // alert("Data copied to clipboard!");
+    alert("Data exported!");
   }
 
-  function importData() {
+  async function importData() {
     console.log("Importing data...");
 
-    let data = prompt("Paste data here:");
+    // let data = prompt("Paste data here:");
+    let data = await openFile();
     if (!data) return;
 
     let parsedData = JSON.parse(data);
@@ -29,12 +68,15 @@
     }
 
     alert("Data imported!");
+
+    location.reload();
   }
 
-  function mergeData() {
+  async function mergeData() {
     console.log("Merging data...");
 
-    let data = prompt("Paste data here:");
+    // let data = prompt("Paste data here:");
+    let data = await openFile();
     if (!data) return;
 
     let parsedData = JSON.parse(data);
@@ -55,9 +97,8 @@
   }
 
   function clearCache() {
-    console.log("Exporting data...");
+    console.log("Clearing data...");
 
-    let data: Record<string, any> = {};
     for (let key in localStorage) {
       if (key.startsWith("cache:")) localStorage.removeItem(key);
     }
