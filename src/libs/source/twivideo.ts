@@ -51,7 +51,7 @@ export class TwiVideoNetProvider extends Twitter {
   }
 
   private videoInfoToTwitterVideo(video: TwiVideoNet.VideoInfo): TwitterVideo {
-    const user = /https?:\/\/x\.com\/([a-zA-Z0-9_]+)\//.exec(
+    const user = /https?:\/\/(?:x|twitter)\.com\/([a-zA-Z0-9_]+)\//.exec(
       video.twitter
     )?.[1];
     return {
