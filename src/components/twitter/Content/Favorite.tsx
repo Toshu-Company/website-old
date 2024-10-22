@@ -11,16 +11,16 @@ type Props = {
 };
 
 export default function Favorite(props: Props) {
-  const $favorite = props.provider.favorite.favorite;
-  const favorite = useStore(props.provider.favorite.favorite);
+  const favorite = props.provider.favorite;
+  const _ = useStore(favorite.favorite);
 
   return (
     <ImageButton
       onClick={() => {
         if (favorite.includes(props.id)) {
-          $favorite.set(favorite.filter((id) => id !== props.id));
+          favorite.remove(props.id);
         } else {
-          $favorite.set(favorite.concat(props.id));
+          favorite.add(props.id);
         }
       }}
     >

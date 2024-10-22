@@ -26,7 +26,11 @@ export class FavoriteStore {
   private $rawFavorite: WritableAtom<string>;
   private $favorite: WritableAtom<string[]>;
 
-  constructor(key: string) {
+  constructor(
+    key: string,
+    private readonly compare: (a: string, b: string) => boolean = (a, b) =>
+      a === b
+  ) {
     this.$rawFavorite = persistentAtom<string>(`twitter:${key}:favorite`, "[]");
     this.$favorite = atom<string[]>(JSON.parse(this.$rawFavorite.get()));
 
@@ -37,6 +41,22 @@ export class FavoriteStore {
 
   get favorite() {
     return this.$favorite;
+  }
+
+  includes(id: string) {
+    return this.$favorite.get().some((value) => this.compare(value, id));
+  }
+
+  add(id: string) {
+    if (!this.includes(id)) {
+      this.$favorite.set(this.$favorite.get().concat(id));
+    }
+  }
+
+  remove(id: string) {
+    this.$favorite.set(
+      this.$favorite.get().filter((value) => !this.compare(value, id))
+    );
   }
 }
 

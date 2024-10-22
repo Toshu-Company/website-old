@@ -7,15 +7,22 @@ import {
 } from "./twitter";
 
 export class TwiVideoNetProvider extends Twitter {
-  public readonly favorite = new FavoriteStore("twivideo");
+  public readonly favorite = new FavoriteStore(
+    "twivideo",
+    (a, b) => this._getVideo(a).original === this._getVideo(b).original
+  );
   perPage = 45;
 
-  override async getVideo(id: string): Promise<TwitterVideo> {
+  private _getVideo(id: string): TwitterVideo {
     const object = JSON.parse(atob(id));
     if ("raw" in object) {
       return object;
     }
     return this.videoInfoToTwitterVideo(object);
+  }
+
+  override async getVideo(id: string): Promise<TwitterVideo> {
+    return this._getVideo(id);
   }
 
   override async getVideoList(page: number): Promise<TwitterVideoList> {
@@ -43,7 +50,7 @@ export class TwiVideoNetProvider extends Twitter {
     };
   }
 
-  private videoInfoToTwitterVideo(video: TwiVideoNet.VideoInfo) {
+  private videoInfoToTwitterVideo(video: TwiVideoNet.VideoInfo): TwitterVideo {
     const user = /https?:\/\/x\.com\/([a-zA-Z0-9_]+)\//.exec(
       video.twitter
     )?.[1];
