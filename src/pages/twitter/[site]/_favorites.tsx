@@ -28,7 +28,7 @@ export default function Index(props: Props) {
   return (
     <>
       <Wrapper>
-        <button onClick={() => migrate()}>Migrate</button>
+        <button style={{ display: "none" }} onClick={() => migrate()}>Migrate</button>
         <Content.Container>
           {favorite.map((v, i) => (
             <Content.Item
