@@ -31,21 +31,7 @@ export class TwiVideoNetProvider extends Twitter {
       this.perPage
     );
     return {
-      videos: result.map((video) => {
-        const user = /https?:\/\/x\.com\/([a-zA-Z0-9_]+)\//.exec(
-          video.twitter
-        )?.[1];
-        return {
-          video: video.video,
-          thumbnail: video.thumbnail,
-          original: video.twitter,
-          user: user,
-          user_id: user,
-          user_url: `https://x.com/${user}/`,
-          raw: video,
-          id: btoa(JSON.stringify(video)),
-        };
-      }),
+      videos: result.map((video) => this.videoInfoToTwitterVideo(video)),
       count: -1,
     };
   }
