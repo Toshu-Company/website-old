@@ -65,14 +65,15 @@ class Worker {
 }
 
 const setFile = async (key: string, blob: any) => {
-  const dataUrl = await blobToDataURL(blob);
-  localStorage.setItem(`cache:${key}`, dataUrl);
+  const cache = await caches.open("thumbnail");
+  await cache.put(key, new Response(blob));
 };
 
 const getFile = async (key: string) => {
-  const dataUrl = localStorage.getItem(`cache:${key}`);
-  if (dataUrl) {
-    return dataURLtoBlob(dataUrl);
+  const cache = await caches.open("thumbnail");
+  const response = await cache.match(key);
+  if (response) {
+    return response.blob();
   }
 };
 
