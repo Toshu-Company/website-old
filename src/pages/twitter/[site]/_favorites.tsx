@@ -21,7 +21,7 @@ export default function Index(props: Props) {
             favorite.map((v, i) => (
               <Content.Item
                 provider={provider}
-                key={i}
+              key={v}
                 detail={provider.getVideo(v)}
               />
             ))}
