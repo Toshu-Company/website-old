@@ -43,7 +43,7 @@ export class TwiVideoNetProvider extends Twitter {
     return {
       video: video.video,
       thumbnail: video.thumbnail,
-      original: video.twitter,
+      original: video.twitter ?? (video as any).original,
       user: user,
       user_id: user,
       user_url: `https://x.com/${user}/`,
