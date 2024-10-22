@@ -2,12 +2,12 @@ import { TwiVideoNet } from "../api";
 import {
   Twitter,
   type TwitterVideoList,
-  FavoriteStore,
+  PersistentStore,
   type TwitterVideo,
 } from "./twitter";
 
 export class TwiVideoNetProvider extends Twitter {
-  public readonly favorite = new FavoriteStore(
+  public readonly favorite = new PersistentStore(
     "twivideo",
     (a, b) => this._getVideo(a).original === this._getVideo(b).original
   );

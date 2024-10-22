@@ -12,7 +12,7 @@ type Props = {
 
 export default function Favorite(props: Props) {
   const favorite = props.provider.favorite;
-  const _ = useStore(favorite.favorite);
+  favorite.use('react');
 
   return (
     <ImageButton

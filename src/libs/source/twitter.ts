@@ -1,4 +1,5 @@
 import { persistentAtom } from "@nanostores/persistent";
+import { useStore } from "@nanostores/react";
 import { atom, type WritableAtom } from "nanostores";
 
 export interface TwitterOptions {}
@@ -22,7 +23,17 @@ export interface List<T> {
 
 export interface TwitterVideoList extends List<TwitterVideo> {}
 
-export class FavoriteStore {
+export abstract class VirtualFavoriteStore<T> {
+  abstract use(type: "react"): T[];
+
+  abstract includes(id: string): boolean;
+
+  abstract add(id: string): void;
+
+  abstract remove(id: string): void;
+}
+
+export class PersistentStore extends VirtualFavoriteStore<string> {
   private $rawFavorite: WritableAtom<string>;
   private $favorite: WritableAtom<string[]>;
 
@@ -31,6 +42,7 @@ export class FavoriteStore {
     private readonly compare: (a: string, b: string) => boolean = (a, b) =>
       a === b
   ) {
+    super();
     this.$rawFavorite = persistentAtom<string>(`twitter:${key}:favorite`, "[]");
     this.$favorite = atom<string[]>(JSON.parse(this.$rawFavorite.get()));
 
@@ -39,21 +51,23 @@ export class FavoriteStore {
     });
   }
 
-  get favorite() {
-    return this.$favorite;
+  override use(type: "react") {
+    if (type === "react") {
+      return useStore(this.$favorite);
+    }
   }
 
-  includes(id: string) {
+  override includes(id: string) {
     return this.$favorite.get().some((value) => this.compare(value, id));
   }
 
-  add(id: string) {
+  override add(id: string) {
     if (!this.includes(id)) {
       this.$favorite.set(this.$favorite.get().concat(id));
     }
   }
 
-  remove(id: string) {
+  override remove(id: string) {
     this.$favorite.set(
       this.$favorite.get().filter((value) => !this.compare(value, id))
     );
@@ -61,7 +75,7 @@ export class FavoriteStore {
 }
 
 export abstract class VirtualTwitter {
-  public abstract readonly favorite: FavoriteStore;
+  public abstract readonly favorite: PersistentStore;
 
   // constructor(options: TwitterOptions) {}
   abstract getVideo(id: string): Promise<TwitterVideo>;
@@ -94,7 +108,7 @@ export abstract class VirtualTwitter {
 }
 
 export class Twitter extends VirtualTwitter {
-  public readonly favorite = new FavoriteStore("default");
+  public readonly favorite = new PersistentStore("default");
 
   // constructor(options: TwitterOptions) {
   //   super(options);

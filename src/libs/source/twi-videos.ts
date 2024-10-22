@@ -5,11 +5,11 @@ import {
   type List,
   type TwitterVideo,
   type TwitterVideoList,
-  FavoriteStore,
+  PersistentStore,
 } from "./twitter";
 
 export class TwiVideosNetProvider extends Twitter {
-  public readonly favorite = new FavoriteStore("twivideos");
+  public readonly favorite = new PersistentStore("twivideos");
   async getVideo(id: string): Promise<TwitterVideo> {
     const detail = await TwiVideosNet.getDetail(id);
     if (Extended.isExtendedVideoDetail(detail)) {

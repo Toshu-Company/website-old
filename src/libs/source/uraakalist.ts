@@ -3,11 +3,11 @@ import {
   Twitter,
   type TwitterVideo,
   type TwitterVideoList,
-  FavoriteStore,
+  PersistentStore,
 } from "./twitter";
 
 export class UraakaListComProvider extends Twitter {
-  public readonly favorite = new FavoriteStore("uraakalist");
+  public readonly favorite = new PersistentStore("uraakalist");
   override async getVideo(id: string): Promise<TwitterVideo> {
     const result = await UraakaList.getVideo(id);
     return {
