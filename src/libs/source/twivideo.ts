@@ -48,6 +48,7 @@ export class TwiVideoNetProvider extends Twitter {
       user_id: user,
       user_url: `https://x.com/${user}/`,
       raw: video,
+      id: btoa(JSON.stringify(video)),
     };
   }
 
