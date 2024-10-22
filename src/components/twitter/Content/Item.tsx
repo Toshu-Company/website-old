@@ -54,7 +54,6 @@ export default function Item(props: Props) {
         <Modal.Detail
           provider={props.provider}
           close={() => setModal(false)}
-          id={detail.id}
           detail={detail}
         />
       )}

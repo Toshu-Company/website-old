@@ -4,6 +4,7 @@ import { $favorite } from "../../../store/twitter/favorite";
 import Content from "../../../components/twitter/Content";
 import { Providers } from "../../../libs/source";
 import { useMemo } from "react";
+import { PersistentStore } from "../../../libs/source/twitter";
 
 interface Props {
   provider: keyof typeof Providers;
@@ -13,15 +14,27 @@ export default function Index(props: Props) {
   const provider = useMemo(() => new Providers[props.provider](), []);
   const favorite = provider.favorite.use("react");
 
+  const migrate = async () => {
+    const old = new PersistentStore("twivideo");
+    const data = (await Promise.all(old.export().map((v) => provider.getVideo(v))));
+    console.log(data);
+    if (provider.favorite.Type === "object") {
+      console.log("object");
+      await provider.favorite.import(data);
+      console.log("imported");
+    }
+  }
+
   return (
     <>
       <Wrapper>
+        <button onClick={() => migrate()}>Migrate</button>
         <Content.Container>
           {favorite.map((v, i) => (
             <Content.Item
               provider={provider}
-              key={v}
-              detail={provider.getVideo(v)}
+              key={typeof v === "string" ? v : v.id}
+              detail={typeof v === "string" ? provider.getVideo(v) : v}
             />
           ))}
         </Content.Container>

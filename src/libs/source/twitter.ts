@@ -1,6 +1,7 @@
 import { persistentAtom } from "@nanostores/persistent";
 import { useStore } from "@nanostores/react";
 import { atom, type WritableAtom } from "nanostores";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 export interface TwitterOptions {}
 
@@ -23,17 +24,22 @@ export interface List<T> {
 
 export interface TwitterVideoList extends List<TwitterVideo> {}
 
-export abstract class VirtualFavoriteStore<T> {
+export abstract class VirtualFavoriteStore<T, K extends "string" | "object"> {
+  public Type: K;
+
   abstract use(type: "react"): T[];
 
-  abstract includes(id: string): boolean;
+  abstract includes(id: T): boolean | Promise<boolean>;
 
-  abstract add(id: string): void;
+  abstract add(id: T): void | Promise<void>;
 
-  abstract remove(id: string): void;
+  abstract remove(id: T): void | Promise<void>;
+
+  abstract import(data: T[]): void | Promise<void>;
+  abstract export(): T[] | Promise<T[]>;
 }
 
-export class PersistentStore extends VirtualFavoriteStore<string> {
+export class PersistentStore extends VirtualFavoriteStore<string, "string"> {
   private $rawFavorite: WritableAtom<string>;
   private $favorite: WritableAtom<string[]>;
 
@@ -72,10 +78,285 @@ export class PersistentStore extends VirtualFavoriteStore<string> {
       this.$favorite.get().filter((value) => !this.compare(value, id))
     );
   }
+
+  override import(data: string[]) {
+    this.$favorite.set(data);
+  }
+
+  override export() {
+    return this.$favorite.get();
+  }
+}
+
+export class IndexedDBStore extends VirtualFavoriteStore<
+  TwitterVideo,
+  "object"
+> {
+  public Type: "object" = "object";
+  private db: IDBDatabase;
+
+  constructor(private readonly key: string) {
+    super();
+    const request = indexedDB.open(`twitter:${key}`, 1);
+    request.onupgradeneeded = () => {
+      console.log("IndexedDB: Upgrade");
+      this.db = request.result;
+      const objectStore = this.db.createObjectStore("favorite", {
+        keyPath: "id",
+      });
+      objectStore.createIndex("id", "id", { unique: true });
+    };
+    request.onsuccess = () => {
+      console.log("IndexedDB: Loaded");
+      this.db = request.result;
+    };
+  }
+
+  override use(type: "react") {
+    if (type === "react") {
+      const [favorite, setFavorite] = useState<TwitterVideo[]>([]);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          if (!this.db) return;
+          clearInterval(timer);
+          const transaction = this.db.transaction(["favorite"], "readonly");
+          const objectStore = transaction.objectStore("favorite");
+          const request = objectStore.getAll();
+          request.onsuccess = () => {
+            setFavorite(request.result);
+          };
+          this.db.addEventListener("change", () => {
+            const request = objectStore.getAll();
+            request.onsuccess = () => {
+              setFavorite(request.result);
+            };
+          });
+        }, 1000);
+
+        return () => {
+          clearInterval(timer);
+        };
+      });
+
+      return favorite;
+    }
+  }
+
+  override includes(video: TwitterVideo) {
+    return new Promise<boolean>((resolve) => {
+      const transaction = this.db.transaction(["favorite"], "readonly");
+      const objectStore = transaction.objectStore("favorite");
+      const request = objectStore.get(video.id);
+      request.onsuccess = () => {
+        resolve(request.result !== undefined);
+      };
+    });
+  }
+
+  override add(video: TwitterVideo) {
+    const transaction = this.db.transaction(["favorite"], "readwrite");
+    const objectStore = transaction.objectStore("favorite");
+    objectStore.add(video);
+  }
+
+  override remove(video: TwitterVideo) {
+    const transaction = this.db.transaction(["favorite"], "readwrite");
+    const objectStore = transaction.objectStore("favorite");
+    objectStore.delete(video.id);
+  }
+
+  override import(data: TwitterVideo[]) {
+    const transaction = this.db.transaction(["favorite"], "readwrite");
+    const objectStore = transaction.objectStore("favorite");
+    data.forEach((value) => {
+      objectStore.add(value);
+    });
+  }
+
+  override export() {
+    return new Promise<TwitterVideo[]>((resolve) => {
+      const transaction = this.db.transaction(["favorite"], "readonly");
+      const objectStore = transaction.objectStore("favorite");
+      const request = objectStore.getAll();
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+    });
+  }
+}
+
+export class LazyIndexedDBStore extends VirtualFavoriteStore<
+  TwitterVideo,
+  "object"
+> {
+  public Type: "object" = "object";
+  private db: IDBDatabase;
+
+  private _cache: TwitterVideo[] = [];
+  private _uncommitted: {
+    type: "add" | "remove";
+    video: TwitterVideo;
+    date?: Date;
+  }[] = [];
+  private _event: EventTarget = new EventTarget();
+
+  private _timer: NodeJS.Timeout;
+
+  private _change() {
+    this._event.dispatchEvent(new Event("change"));
+  }
+
+  private _sync() {
+    if (!this.db) return;
+    const transaction = this.db.transaction(["favorite"], "readwrite");
+    const objectStore = transaction.objectStore("favorite");
+    this._uncommitted.forEach((value) => {
+      if (value.type === "add") {
+        objectStore.add({
+          ...value.video,
+          date: value.date ?? new Date(),
+        });
+      } else {
+        objectStore.delete(value.video.id);
+      }
+    });
+    this._uncommitted = [];
+    const request = objectStore.index("date").openCursor();
+    const cache = [];
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (cursor) {
+        cache.push(cursor.value);
+        cursor.continue();
+      } else {
+        this._cache = cache;
+        this._change();
+      }
+    };
+  }
+
+  constructor(private readonly key: string) {
+    super();
+    const request = indexedDB.open(`twitter:${key}`, 2);
+    request.onupgradeneeded = () => {
+      this.db = request.result;
+      const objectStore = this.db.createObjectStore("favorite", {
+        keyPath: "id",
+      });
+      objectStore.createIndex("id", "id", { unique: true });
+      objectStore.createIndex("date", "date", { unique: false });
+    };
+    request.onsuccess = () => {
+      this.db = request.result;
+    };
+
+    clearInterval(this._timer);
+    this._timer = setInterval(() => {
+      this._sync();
+    }, 1000);
+  }
+
+  override use(type: "react") {
+    if (type === "react") {
+      return useSyncExternalStore(
+        (onStoreChange: () => void) => {
+          this._event.addEventListener("change", onStoreChange);
+
+          return () => {
+            this._event.removeEventListener("change", onStoreChange);
+          };
+        },
+        () => {
+          return this._cache;
+        }
+      );
+    }
+  }
+
+  override includes(video: TwitterVideo) {
+    return this._cache.some((v) => v.id === video.id);
+  }
+
+  override add(video: TwitterVideo) {
+    this._uncommitted.push({
+      type: "add",
+      video,
+      date: new Date(),
+    });
+    this._cache.push(video);
+    this._change();
+  }
+
+  override remove(video: TwitterVideo) {
+    this._uncommitted.push({ type: "remove", video });
+    this._cache = this._cache.filter((v) => v.id !== video.id);
+    this._change();
+  }
+
+  override async import(data: TwitterVideo[]) {
+    return new Promise<void>((resolve) => {
+      const transaction = this.db.transaction(["favorite"], "readwrite");
+      const objectStore = transaction.objectStore("favorite");
+      objectStore.clear();
+      const imported = [];
+      const start = new Date();
+      data.forEach((value) => {
+        if (imported.some((v) => v.id === value.id))
+          return console.log("Duplicated", value);
+        imported.push(value);
+        objectStore.add({
+          ...value,
+          date: new Date(start.getTime() + imported.length),
+        }).onsuccess = () => {
+          console.log(`Imported: ${value.id}`);
+        };
+      });
+      transaction.onabort = (ev) => {
+        console.error("Import failed", ev);
+      };
+      transaction.onerror = (ev) => {
+        console.error("Import failed", ev);
+      };
+      transaction.oncomplete = () => {
+        resolve();
+      };
+    });
+  }
+
+  override async export() {
+    return new Promise<TwitterVideo[]>((resolve) => {
+      const transaction = this.db.transaction(["favorite"], "readonly");
+      const objectStore = transaction.objectStore("favorite");
+      const request = objectStore.getAll();
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+    });
+  }
+}
+
+export class CacheStore<T> {
+  constructor(private readonly key: string) {}
+
+  async get(key: string): Promise<T | undefined> {
+    const cache = await caches.open(this.key);
+    const response = await cache.match(key);
+    if (response) {
+      return response.json();
+    }
+  }
+
+  async set(key: string, value: T) {
+    const cache = await caches.open(this.key);
+    await cache.put(key, new Response(JSON.stringify(value)));
+  }
 }
 
 export abstract class VirtualTwitter {
-  public abstract readonly favorite: PersistentStore;
+  public abstract readonly favorite:
+    | VirtualFavoriteStore<string, "string">
+    | VirtualFavoriteStore<TwitterVideo, "object">;
 
   // constructor(options: TwitterOptions) {}
   abstract getVideo(id: string): Promise<TwitterVideo>;
@@ -108,7 +389,11 @@ export abstract class VirtualTwitter {
 }
 
 export class Twitter extends VirtualTwitter {
-  public readonly favorite = new PersistentStore("default");
+  public readonly favorite:
+    | VirtualFavoriteStore<string, "string">
+    | VirtualFavoriteStore<TwitterVideo, "object"> = new PersistentStore(
+    "default"
+  );
 
   // constructor(options: TwitterOptions) {
   //   super(options);

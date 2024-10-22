@@ -3,29 +3,55 @@ import { useStore } from "@nanostores/react";
 import Image from "../../Image";
 import HeartIcon from "../../../assets/heart.svg";
 import HeartFillIcon from "../../../assets/heart-fill.svg";
-import type { VirtualTwitter } from "../../../libs/source/twitter";
+import type { TwitterVideo, VirtualTwitter } from "../../../libs/source/twitter";
+import { useEffect, useState } from "react";
 
 type Props = {
   provider: VirtualTwitter;
-  id: string;
+  detail: TwitterVideo;
 };
 
 export default function Favorite(props: Props) {
-  const favorite = props.provider.favorite;
+  const { provider, detail } = props;
+  const { favorite } = provider;
   favorite.use('react');
+
+  const [favorited, setFavorited] = useState<boolean>();
+
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      if (favorite.Type === "object") {
+        const result = await favorite.includes(detail);
+        setFavorited(result);
+      } else {
+        const result = await favorite.includes(detail.id);
+        setFavorited(result);
+      }
+    };
+
+    fetchFavoriteStatus();
+  });
 
   return (
     <ImageButton
-      onClick={() => {
-        if (favorite.includes(props.id)) {
-          favorite.remove(props.id);
+      onClick={async () => {
+        if (favorite.Type === "object") {
+          if (await favorite.includes(detail)) {
+            await favorite.remove(detail);
+          } else {
+            await favorite.add(detail);
+          }
         } else {
-          favorite.add(props.id);
+          if (await favorite.includes(detail.id)) {
+            await favorite.remove(detail.id);
+          } else {
+            await favorite.add(detail.id);
+          }
         }
       }}
     >
       <Image
-        src={favorite.includes(props.id) ? HeartFillIcon.src : HeartIcon.src}
+        src={favorited ? HeartFillIcon.src : HeartIcon.src}
         width={[24, { responsive: 768, size: 20 }]}
         alt="Favorites"
         responsive

@@ -12,12 +12,11 @@ import { useStore } from "@nanostores/react";
 
 type Props = {
   close: () => void;
-  id?: string;
   detail: TwitterVideo;
   provider: VirtualTwitter;
 };
 
-export default function Detail({ close, id, detail, provider }: Props) {
+export default function Detail({ close, detail, provider }: Props) {
   const [url, setUrl] = useState<string>();
   const [censored, setCensored] = useState<boolean>();
   const [autoPlay, setAutoPlay] = useState<boolean>($twitter.get().autoPlay);
@@ -63,7 +62,9 @@ export default function Detail({ close, id, detail, provider }: Props) {
             <ExternalLink href={detail.original} target="_blank">
               <Title>{detail.title ?? "No Title"}</Title>
             </ExternalLink>
-            <Menu>{id && <Favorite provider={provider} id={id} />}</Menu>
+            <Menu>
+              <Favorite provider={provider} detail={detail} />
+            </Menu>
           </TopRow>
           <ExternalLink href={`/twitter/user?user=${detail.user_id}`}>
             <User>

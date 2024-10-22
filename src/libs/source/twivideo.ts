@@ -4,13 +4,14 @@ import {
   type TwitterVideoList,
   PersistentStore,
   type TwitterVideo,
+  IndexedDBStore,
+  LazyIndexedDBStore,
+  CacheStore,
 } from "./twitter";
 
 export class TwiVideoNetProvider extends Twitter {
-  public readonly favorite = new PersistentStore(
-    "twivideo",
-    (a, b) => this._getVideo(a).original === this._getVideo(b).original
-  );
+  public readonly favorite = new LazyIndexedDBStore("twivideo");
+  // private readonly cache = new CacheStore("twivideo");
   perPage = 45;
 
   private _getVideo(id: string): TwitterVideo {
@@ -30,6 +31,7 @@ export class TwiVideoNetProvider extends Twitter {
       (page - 1) * this.perPage,
       this.perPage
     );
+    // this.cache.set(`index-${page}-${new Date().toLocaleDateString()}`, result);
     return {
       videos: result.map((video) => this.videoInfoToTwitterVideo(video)),
       count: -1,
@@ -37,18 +39,21 @@ export class TwiVideoNetProvider extends Twitter {
   }
 
   private videoInfoToTwitterVideo(video: TwiVideoNet.VideoInfo): TwitterVideo {
-    const user = /https?:\/\/(?:x|twitter)\.com\/([a-zA-Z0-9_]+)\//.exec(
-      video.twitter ?? (video as any).original
-    )?.[1];
+    const match =
+      /https?:\/\/(?:x|twitter)\.com\/([a-zA-Z0-9_]+)\/(?:status\/(\d+))?/.exec(
+        video.twitter ?? (video as any).original
+      );
+    const user = match?.[1];
+    const id = match?.[2];
     return {
       video: video.video,
       thumbnail: video.thumbnail,
       original: video.twitter ?? (video as any).original,
       user: user,
       user_id: user,
-      user_url: `https://x.com/${user}/`,
+      user_url: user ? `https://x.com/${user}/` : undefined,
       raw: video,
-      id: btoa(JSON.stringify(video)),
+      id: id ?? video.twitter,
     };
   }
 
