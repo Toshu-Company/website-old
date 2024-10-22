@@ -60,13 +60,15 @@ export default function Detail({ close, id, detail, provider }: Props) {
             <Video></Video>
           )}
           <TopRow>
-            <User>
-              <a href={`/twitter/user?user=${detail.user_id}`}>{detail.user}</a>
-            </User>
+            <ExternalLink href={detail.original} target="_blank">
+              <Title>{detail.title ?? "No Title"}</Title>
+            </ExternalLink>
             <Menu>{id && <Favorite provider={provider} id={id} />}</Menu>
           </TopRow>
-          <ExternalLink href={detail.original} target="_blank">
-            <Title>{detail.title}</Title>
+          <ExternalLink href={`/twitter/user?user=${detail.user_id}`}>
+            <User>
+              @{detail.user}
+            </User>
           </ExternalLink>
         </Wrapper>
       </Modal.Default>
@@ -103,13 +105,13 @@ const Menu = styled.div`
   gap: 10px;
 `;
 
-const User = styled.h1`
+const Title = styled.h1`
   font-size: 24px;
   font-weight: 600;
   color: white;
 `;
 
-const Title = styled.h2`
+const User = styled.h2`
   font-size: 24px;
   font-weight: 500;
   color: white;

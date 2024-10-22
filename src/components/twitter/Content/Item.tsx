@@ -47,7 +47,7 @@ export default function Item(props: Props) {
           )}
         </ImageWrapper>
         <TextWrapper>
-          <Text>{detail?.user ?? "\u00a0"}</Text>
+          <Text>{detail?.user ? `@${detail?.user}` : "\u00a0"}</Text>
         </TextWrapper>
       </Wrapper>
       {modal && detail && (
