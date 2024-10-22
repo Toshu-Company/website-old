@@ -16,7 +16,7 @@ export class TwiVideoNetProvider extends Twitter {
   private _getVideo(id: string): TwitterVideo {
     const object = JSON.parse(atob(id));
     if ("raw" in object) {
-      return object;
+      return this.videoInfoToTwitterVideo(object.raw);
     }
     return this.videoInfoToTwitterVideo(object);
   }
