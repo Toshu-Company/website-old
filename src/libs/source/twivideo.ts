@@ -2,16 +2,14 @@ import { TwiVideoNet } from "../api";
 import {
   Twitter,
   type TwitterVideoList,
-  PersistentStore,
   type TwitterVideo,
-  IndexedDBStore,
   LazyIndexedDBStore,
   CacheStore,
 } from "./twitter";
 
 export class TwiVideoNetProvider extends Twitter {
   public readonly favorite = new LazyIndexedDBStore("twivideo");
-  // private readonly cache = new CacheStore("twivideo");
+  private readonly cache = new CacheStore("twivideo");
   perPage = 45;
 
   private _getVideo(id: string): TwitterVideo {
@@ -31,7 +29,7 @@ export class TwiVideoNetProvider extends Twitter {
       (page - 1) * this.perPage,
       this.perPage
     );
-    // this.cache.set(`index-${page}-${new Date().toLocaleDateString()}`, result);
+    this.cache.set(`index-${page}-${new Date().toLocaleDateString()}`, result);
     return {
       videos: result.map((video) => this.videoInfoToTwitterVideo(video)),
       count: -1,
