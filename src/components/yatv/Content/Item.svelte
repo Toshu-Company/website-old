@@ -17,7 +17,10 @@
       });
   } else {
     Yatv.getVideo(videoInfo.url).then((res) => {
-      videoInfo.thumbnail = res.thumbnail;
+      videoInfo.title = res.title ?? videoInfo.title;
+      videoInfo.playtime = res.playtime ?? videoInfo.playtime;
+      videoInfo.upload_date = res.upload_date ?? videoInfo.upload_date;
+      videoInfo.thumbnail = res.thumbnail ?? videoInfo.thumbnail;
     });
   }
 </script>
@@ -34,7 +37,7 @@
   </div>
   <div class="text-wrapper">
     <p>
-      {$common.censored ? "Good Picture 👍" : videoInfo?.title ?? "\u00a0"}
+      {$common.censored ? "Good Picture 👍" : (videoInfo?.title ?? "\u00a0")}
     </p>
   </div>
 </button>

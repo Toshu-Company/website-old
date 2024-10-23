@@ -6,7 +6,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 export interface TwitterOptions {}
 
 export interface TwitterVideo {
-  id?: string;
+  id: string;
   title?: string;
   user?: string;
   user_id?: string;
@@ -25,7 +25,7 @@ export interface List<T> {
 export interface TwitterVideoList extends List<TwitterVideo> {}
 
 export abstract class VirtualFavoriteStore<T, K extends "string" | "object"> {
-  public Type: K;
+  public Type!: K;
 
   abstract use(type: "react"): T[];
 
@@ -61,6 +61,7 @@ export class PersistentStore extends VirtualFavoriteStore<string, "string"> {
     if (type === "react") {
       return useStore(this.$favorite);
     }
+    return this.$favorite.get();
   }
 
   override includes(id: string) {
@@ -93,7 +94,7 @@ export class IndexedDBStore extends VirtualFavoriteStore<
   "object"
 > {
   public Type: "object" = "object";
-  private db: IDBDatabase;
+  private db: IDBDatabase | undefined;
 
   constructor(private readonly key: string) {
     super();
@@ -141,11 +142,13 @@ export class IndexedDBStore extends VirtualFavoriteStore<
 
       return favorite;
     }
+    return [];
   }
 
   override includes(video: TwitterVideo) {
+    if (!this.db) return Promise.resolve(false);
     return new Promise<boolean>((resolve) => {
-      const transaction = this.db.transaction(["favorite"], "readonly");
+      const transaction = this.db!.transaction(["favorite"], "readonly");
       const objectStore = transaction.objectStore("favorite");
       const request = objectStore.get(video.id);
       request.onsuccess = () => {
@@ -155,18 +158,21 @@ export class IndexedDBStore extends VirtualFavoriteStore<
   }
 
   override add(video: TwitterVideo) {
+    if (!this.db) throw new Error("Database not loaded");
     const transaction = this.db.transaction(["favorite"], "readwrite");
     const objectStore = transaction.objectStore("favorite");
     objectStore.add(video);
   }
 
   override remove(video: TwitterVideo) {
+    if (!this.db) throw new Error("Database not loaded");
     const transaction = this.db.transaction(["favorite"], "readwrite");
     const objectStore = transaction.objectStore("favorite");
     objectStore.delete(video.id);
   }
 
   override import(data: TwitterVideo[]) {
+    if (!this.db) throw new Error("Database not loaded");
     const transaction = this.db.transaction(["favorite"], "readwrite");
     const objectStore = transaction.objectStore("favorite");
     data.forEach((value) => {
@@ -175,8 +181,9 @@ export class IndexedDBStore extends VirtualFavoriteStore<
   }
 
   override export() {
+    if (!this.db) throw new Error("Database not loaded");
     return new Promise<TwitterVideo[]>((resolve) => {
-      const transaction = this.db.transaction(["favorite"], "readonly");
+      const transaction = this.db!.transaction(["favorite"], "readonly");
       const objectStore = transaction.objectStore("favorite");
       const request = objectStore.getAll();
       request.onsuccess = () => {
@@ -191,7 +198,7 @@ export class LazyIndexedDBStore extends VirtualFavoriteStore<
   "object"
 > {
   public Type: "object" = "object";
-  private db: IDBDatabase;
+  private db: IDBDatabase | undefined;
 
   private _cache: TwitterVideo[] = [];
   private _uncommitted: {
@@ -218,12 +225,12 @@ export class LazyIndexedDBStore extends VirtualFavoriteStore<
           date: value.date ?? new Date(),
         });
       } else {
-        objectStore.delete(value.video.id);
+        objectStore.delete(value.video.id!);
       }
     });
     this._uncommitted = [];
     const request = objectStore.index("date").openCursor();
-    const cache = [];
+    const cache: TwitterVideo[] = [];
     request.onsuccess = () => {
       const cursor = request.result;
       if (cursor) {
@@ -251,7 +258,6 @@ export class LazyIndexedDBStore extends VirtualFavoriteStore<
       this.db = request.result;
     };
 
-    clearInterval(this._timer);
     this._timer = setInterval(() => {
       this._sync();
     }, 1000);
@@ -272,6 +278,7 @@ export class LazyIndexedDBStore extends VirtualFavoriteStore<
         }
       );
     }
+    return this._cache;
   }
 
   override includes(video: TwitterVideo) {
@@ -295,11 +302,12 @@ export class LazyIndexedDBStore extends VirtualFavoriteStore<
   }
 
   override async import(data: TwitterVideo[]) {
+    if (!this.db) throw new Error("Database not loaded");
     return new Promise<void>((resolve) => {
-      const transaction = this.db.transaction(["favorite"], "readwrite");
+      const transaction = this.db!.transaction(["favorite"], "readwrite");
       const objectStore = transaction.objectStore("favorite");
       objectStore.clear();
-      const imported = [];
+      const imported: TwitterVideo[] = [];
       const start = new Date();
       data.forEach((value) => {
         if (imported.some((v) => v.id === value.id))
@@ -325,8 +333,9 @@ export class LazyIndexedDBStore extends VirtualFavoriteStore<
   }
 
   override async export() {
+    if (!this.db) throw new Error("Database not loaded");
     return new Promise<TwitterVideo[]>((resolve) => {
-      const transaction = this.db.transaction(["favorite"], "readonly");
+      const transaction = this.db!.transaction(["favorite"], "readonly");
       const objectStore = transaction.objectStore("favorite");
       const request = objectStore.getAll();
       request.onsuccess = () => {

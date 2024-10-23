@@ -22,7 +22,6 @@ export default defineConfig({
     compress({
       // enable: !isDev,
       enable: true,
-      HTML: false,
     }),
   ],
   output: 'server',

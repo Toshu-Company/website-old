@@ -11,6 +11,7 @@ export class UraakaListComProvider extends Twitter {
   override async getVideo(id: string): Promise<TwitterVideo> {
     const result = await UraakaList.getVideo(id);
     return {
+      id: id,
       title: result.title,
       video: result.video,
       thumbnail: result.image ?? "",

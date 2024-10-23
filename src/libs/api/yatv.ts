@@ -73,7 +73,11 @@ export async function mirror(url: string) {
 
 export interface VideoInfo {
   video: string;
-  thumbnail: string;
+  id?: string;
+  title?: string;
+  upload_date?: string;
+  playtime?: string;
+  thumbnail?: string;
 }
 
 export type SearchResult = SearchResultVideo[];
