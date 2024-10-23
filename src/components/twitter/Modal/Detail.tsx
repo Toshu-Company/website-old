@@ -6,14 +6,14 @@ import { $setting as $twitter } from "../../../store/twitter/setting";
 import { $setting as $common } from "../../../store/setting";
 import type {
   TwitterVideo,
-  VirtualTwitter,
+  VirtualProvider,
 } from "../../../libs/source/twitter";
 import { useStore } from "@nanostores/react";
 
 type Props = {
   close: () => void;
   detail: TwitterVideo;
-  provider: VirtualTwitter;
+  provider: VirtualProvider<TwitterVideo>;
 };
 
 export default function Detail({ close, detail, provider }: Props) {

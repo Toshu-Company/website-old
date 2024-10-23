@@ -2,6 +2,7 @@ import { persistentAtom } from "@nanostores/persistent";
 import { useStore } from "@nanostores/react";
 import { atom, type WritableAtom } from "nanostores";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { readable, writable } from "svelte/store";
 
 export interface TwitterOptions {}
 
@@ -18,7 +19,7 @@ export interface TwitterVideo {
 }
 
 export interface List<T> {
-  videos: (T | Promise<T>)[];
+  videos: T[];
   count: number;
 }
 
@@ -27,7 +28,7 @@ export interface TwitterVideoList extends List<TwitterVideo> {}
 export abstract class VirtualFavoriteStore<T, K extends "string" | "object"> {
   public Type!: K;
 
-  abstract use(type: "react"): T[];
+  abstract use(type: "react" | "svelte"): any;
 
   abstract includes(id: T): boolean | Promise<boolean>;
 
@@ -89,17 +90,16 @@ export class PersistentStore extends VirtualFavoriteStore<string, "string"> {
   }
 }
 
-export class IndexedDBStore extends VirtualFavoriteStore<
-  TwitterVideo,
-  "object"
-> {
+export class IndexedDBStore<
+  T extends { id: string }
+> extends VirtualFavoriteStore<T, "object"> {
   public Type: "object" = "object";
   private db: IDBDatabase | undefined;
 
-  private _cache: TwitterVideo[] = [];
+  private _cache: T[] = [];
   private _uncommitted: {
     type: "add" | "remove";
-    video: TwitterVideo;
+    video: T;
     date?: Date;
   }[] = [];
   private _event: EventTarget = new EventTarget();
@@ -126,7 +126,7 @@ export class IndexedDBStore extends VirtualFavoriteStore<
     });
     this._uncommitted = [];
     const request = objectStore.index("date").openCursor();
-    const cache: TwitterVideo[] = [];
+    const cache: T[] = [];
     request.onsuccess = () => {
       const cursor = request.result;
       if (cursor) {
@@ -159,7 +159,7 @@ export class IndexedDBStore extends VirtualFavoriteStore<
     }, 1000);
   }
 
-  override use(type: "react") {
+  override use(type: "react" | "svelte") {
     if (type === "react") {
       return useSyncExternalStore(
         (onStoreChange: () => void) => {
@@ -174,14 +174,27 @@ export class IndexedDBStore extends VirtualFavoriteStore<
         }
       );
     }
+    if (type === "svelte") {
+      return readable(this._cache, (set) => {
+        this._event.addEventListener("change", () => {
+          set(this._cache);
+        });
+
+        return () => {
+          this._event.removeEventListener("change", () => {
+            set(this._cache);
+          });
+        };
+      });
+    }
     return this._cache;
   }
 
-  override includes(video: TwitterVideo) {
+  override includes(video: T) {
     return this._cache.some((v) => v.id === video.id);
   }
 
-  override add(video: TwitterVideo) {
+  override add(video: T) {
     this._uncommitted.push({
       type: "add",
       video,
@@ -191,19 +204,19 @@ export class IndexedDBStore extends VirtualFavoriteStore<
     this._change();
   }
 
-  override remove(video: TwitterVideo) {
+  override remove(video: T) {
     this._uncommitted.push({ type: "remove", video });
     this._cache = this._cache.filter((v) => v.id !== video.id);
     this._change();
   }
 
-  override async import(data: TwitterVideo[]) {
+  override async import(data: T[]) {
     if (!this.db) throw new Error("Database not loaded");
     return new Promise<void>((resolve) => {
       const transaction = this.db!.transaction(["favorite"], "readwrite");
       const objectStore = transaction.objectStore("favorite");
       objectStore.clear();
-      const imported: TwitterVideo[] = [];
+      const imported: T[] = [];
       const start = new Date();
       data.forEach((value) => {
         if (imported.some((v) => v.id === value.id))
@@ -230,7 +243,7 @@ export class IndexedDBStore extends VirtualFavoriteStore<
 
   override async export() {
     if (!this.db) throw new Error("Database not loaded");
-    return new Promise<TwitterVideo[]>((resolve) => {
+    return new Promise<T[]>((resolve) => {
       const transaction = this.db!.transaction(["favorite"], "readonly");
       const objectStore = transaction.objectStore("favorite");
       const request = objectStore.getAll();
@@ -258,32 +271,25 @@ export class CacheStore<T> {
   }
 }
 
-export abstract class VirtualTwitter {
+export abstract class VirtualProvider<T> {
   public abstract readonly favorite:
     | VirtualFavoriteStore<string, "string">
-    | VirtualFavoriteStore<TwitterVideo, "object">;
+    | VirtualFavoriteStore<T, "object">;
 
-  // constructor(options: TwitterOptions) {}
-  abstract getVideo(id: string): Promise<TwitterVideo>;
+  abstract getVideo(id: string): Promise<T>;
 
-  abstract getVideoList(page: number): Promise<TwitterVideoList>;
+  abstract getVideoList(page: number): Promise<List<T>>;
 
   abstract getVideoIdList(page: number): Promise<List<string>>;
 
-  abstract getVideoListByUser(
-    user: string,
-    page: number
-  ): Promise<TwitterVideoList>;
+  abstract getVideoListByUser(user: string, page: number): Promise<List<T>>;
 
   abstract getVideoIdListByUser(
     user: string,
     page: number
   ): Promise<List<string>>;
 
-  abstract searchVideoList(
-    keyword: string,
-    page: number
-  ): Promise<TwitterVideoList>;
+  abstract searchVideoList(keyword: string, page: number): Promise<List<T>>;
 
   abstract searchVideoIdList(
     keyword: string,
@@ -293,44 +299,28 @@ export abstract class VirtualTwitter {
   abstract resolveVideo(url: string): Promise<string>;
 }
 
-export class Twitter extends VirtualTwitter {
-  public readonly favorite:
+export class DefaultProvider<
+  T extends { id: string }
+> extends VirtualProvider<T> {
+  public favorite:
     | VirtualFavoriteStore<string, "string">
-    | VirtualFavoriteStore<TwitterVideo, "object"> = new PersistentStore(
-    "default"
-  );
-
-  // constructor(options: TwitterOptions) {
-  //   super(options);
-  // }
-
-  async getVideo(id: string): Promise<TwitterVideo> {
+    | VirtualFavoriteStore<T, "object"> = new IndexedDBStore<T>("default");
+  getVideo(id: string): Promise<T> {
     throw new Error("Method not implemented.");
   }
-
-  async getVideoList(page: number): Promise<TwitterVideoList> {
+  getVideoList(page: number): Promise<List<T>> {
     throw new Error("Method not implemented.");
   }
-
-  async getVideoIdList(page: number): Promise<List<string>> {
+  getVideoIdList(page: number): Promise<List<string>> {
     throw new Error("Method not implemented.");
   }
-
-  async getVideoListByUser(
-    user: string,
-    page: number
-  ): Promise<TwitterVideoList> {
+  getVideoListByUser(user: string, page: number): Promise<List<T>> {
     throw new Error("Method not implemented.");
   }
-
   getVideoIdListByUser(user: string, page: number): Promise<List<string>> {
     throw new Error("Method not implemented.");
   }
-
-  async searchVideoList(
-    keyword: string,
-    page: number
-  ): Promise<TwitterVideoList> {
+  searchVideoList(keyword: string, page: number): Promise<List<T>> {
     throw new Error("Method not implemented.");
   }
   searchVideoIdList(keyword: string, page: number): Promise<List<string>> {

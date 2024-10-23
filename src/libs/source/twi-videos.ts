@@ -1,14 +1,14 @@
 import { TwiVideosNet } from "../api";
 import { Extended } from "../api/twi-videos.net";
 import {
-  Twitter,
   type List,
   type TwitterVideo,
   type TwitterVideoList,
+  DefaultProvider,
   PersistentStore,
 } from "./twitter";
 
-export class TwiVideosNetProvider extends Twitter {
+export class TwiVideosNetProvider extends DefaultProvider<TwitterVideo> {
   public readonly favorite = new PersistentStore("twivideos");
   async getVideo(id: string): Promise<TwitterVideo> {
     const detail = await TwiVideosNet.getDetail(id);
@@ -41,7 +41,9 @@ export class TwiVideosNetProvider extends Twitter {
   async getVideoList(page: number): Promise<TwitterVideoList> {
     const result = await TwiVideosNet.getIndex(page);
     return {
-      videos: result.videos.map(async (video) => await this.getVideo(video.id)),
+      videos: await Promise.all(
+        result.videos.map(async (video) => await this.getVideo(video.id))
+      ),
       count: result.count,
     };
   }
@@ -60,7 +62,9 @@ export class TwiVideosNetProvider extends Twitter {
   ): Promise<TwitterVideoList> {
     const result = await TwiVideosNet.getSearchUser(user, page);
     return {
-      videos: result.videos.map(async (video) => await this.getVideo(video.id)),
+      videos: await Promise.all(
+        result.videos.map(async (video) => await this.getVideo(video.id))
+      ),
       count: result.count,
     };
   }
@@ -71,7 +75,9 @@ export class TwiVideosNetProvider extends Twitter {
   ): Promise<TwitterVideoList> {
     const result = await TwiVideosNet.getSearch(keyword, page);
     return {
-      videos: result.videos.map(async (video) => await this.getVideo(video.id)),
+      videos: await Promise.all(
+        result.videos.map(async (video) => await this.getVideo(video.id))
+      ),
       count: result.count,
     };
   }

@@ -1,12 +1,12 @@
-import { TwiVideoNet, UraakaList } from "../api";
+import { UraakaList } from "../api";
 import {
-  Twitter,
   type TwitterVideo,
   type TwitterVideoList,
   PersistentStore,
+  DefaultProvider,
 } from "./twitter";
 
-export class UraakaListComProvider extends Twitter {
+export class UraakaListComProvider extends DefaultProvider<TwitterVideo> {
   public readonly favorite = new PersistentStore("uraakalist");
   override async getVideo(id: string): Promise<TwitterVideo> {
     const result = await UraakaList.getVideo(id);
@@ -24,19 +24,21 @@ export class UraakaListComProvider extends Twitter {
   override async getVideoList(page: number): Promise<TwitterVideoList> {
     const result = await UraakaList.getIndex(page);
     return {
-      videos: result.tweets.map(async (video) => {
-        const res = await this.getVideo(video.id);
-        return {
-          ...res,
-          id: video.id,
-          original: video.url,
-          thumbnail: video.thumbnail,
-          raw: {
-            index: video,
-            detail: res.raw,
-          },
-        };
-      }),
+      videos: await Promise.all(
+        result.tweets.map(async (video) => {
+          const res = await this.getVideo(video.id);
+          return {
+            ...res,
+            id: video.id,
+            original: video.url,
+            thumbnail: video.thumbnail,
+            raw: {
+              index: video,
+              detail: res.raw,
+            },
+          };
+        })
+      ),
       count: -1,
     };
   }
@@ -47,19 +49,21 @@ export class UraakaListComProvider extends Twitter {
   ): Promise<TwitterVideoList> {
     const result = await UraakaList.getSearch(keyword, page);
     return {
-      videos: result.tweets.map(async (video) => {
-        const res = await this.getVideo(video.id);
-        return {
-          ...res,
-          id: video.id,
-          original: video.url,
-          thumbnail: video.thumbnail,
-          raw: {
-            index: video,
-            detail: res.raw,
-          },
-        };
-      }),
+      videos: await Promise.all(
+        result.tweets.map(async (video) => {
+          const res = await this.getVideo(video.id);
+          return {
+            ...res,
+            id: video.id,
+            original: video.url,
+            thumbnail: video.thumbnail,
+            raw: {
+              index: video,
+              detail: res.raw,
+            },
+          };
+        })
+      ),
       count: -1,
     };
   }

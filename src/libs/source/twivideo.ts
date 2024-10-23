@@ -1,14 +1,14 @@
 import { TwiVideoNet } from "../api";
 import {
-  Twitter,
   type TwitterVideoList,
   type TwitterVideo,
   IndexedDBStore,
   CacheStore,
+  DefaultProvider,
 } from "./twitter";
 
-export class TwiVideoNetProvider extends Twitter {
-  public readonly favorite = new IndexedDBStore("twivideo");
+export class TwiVideoNetProvider extends DefaultProvider<TwitterVideo> {
+  public readonly favorite = new IndexedDBStore<TwitterVideo>("twivideo");
   private readonly cache = new CacheStore("twivideo");
   perPage = 45;
 

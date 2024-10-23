@@ -35,7 +35,7 @@ async function fetchAPI(url: string, prop: Props = {}) {
   return json;
 }
 
-export async function getVideo(url: string): Promise<VideoInfo> {
+export async function getVideo(url: string): Promise<VideoDetailInfo> {
   const data = await fetchAPI(
     `${import.meta.env.PUBLIC_TWITTER_API_URL}/yatv/detail`,
     {
@@ -71,21 +71,20 @@ export async function mirror(url: string) {
   return data;
 }
 
-export interface VideoInfo {
+export interface Video {
+  id: string;
+  title: string;
+  thumbnail: string;
+  upload_date: string;
+  playtime: string;
+}
+
+export interface VideoDetailInfo extends Video {
   video: string;
-  id?: string;
-  title?: string;
-  upload_date?: string;
-  playtime?: string;
-  thumbnail?: string;
+}
+
+export interface SearchResultVideo extends Video {
+  url: string;
 }
 
 export type SearchResult = SearchResultVideo[];
-
-export interface SearchResultVideo {
-  thumbnail: string;
-  title: string;
-  upload_date: string;
-  playtime: string;
-  url: string;
-}

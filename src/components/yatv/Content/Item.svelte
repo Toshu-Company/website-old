@@ -3,25 +3,24 @@
   import Loading from "../../../assets/loading.jpg";
   import { Yatv } from "../../../libs/api";
   import Detail from "../Modal/Detail.svelte";
+  import type { VirtualProvider } from "../../../libs/source/twitter";
 
+  export let provider: VirtualProvider<Yatv.SearchResultVideo>;
   export let videoInfo: Yatv.SearchResultVideo;
 
   let modal = false;
   let imageUrl: string;
 
-  $: if (videoInfo.thumbnail) {
+  $: if (!videoInfo.thumbnail) {
+    Yatv.getVideo(videoInfo.url).then((res) => {
+      videoInfo.thumbnail = res.thumbnail ?? videoInfo.thumbnail;
+    });
+  } else if (!imageUrl) {
     Yatv.mirror(videoInfo.thumbnail)
       .then((res) => res.blob())
       .then((blob) => {
         imageUrl = URL.createObjectURL(blob);
       });
-  } else {
-    Yatv.getVideo(videoInfo.url).then((res) => {
-      videoInfo.title = res.title ?? videoInfo.title;
-      videoInfo.playtime = res.playtime ?? videoInfo.playtime;
-      videoInfo.upload_date = res.upload_date ?? videoInfo.upload_date;
-      videoInfo.thumbnail = res.thumbnail ?? videoInfo.thumbnail;
-    });
   }
 </script>
 
@@ -42,7 +41,7 @@
   </div>
 </button>
 {#if modal}
-  <Detail info={videoInfo} close={() => (modal = false)} />
+  <Detail {provider} info={videoInfo} close={() => (modal = false)} />
 {/if}
 
 <style lang="scss">

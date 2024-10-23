@@ -3,11 +3,11 @@ import { useStore } from "@nanostores/react";
 import Image from "../../Image";
 import HeartIcon from "../../../assets/heart.svg";
 import HeartFillIcon from "../../../assets/heart-fill.svg";
-import type { TwitterVideo, VirtualTwitter } from "../../../libs/source/twitter";
+import type { TwitterVideo, VirtualProvider } from "../../../libs/source/twitter";
 import { useEffect, useState } from "react";
 
 type Props = {
-  provider: VirtualTwitter;
+  provider: VirtualProvider<TwitterVideo>;
   detail: TwitterVideo;
 };
 

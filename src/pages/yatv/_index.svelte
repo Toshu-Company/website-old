@@ -2,17 +2,21 @@
   import IntersectionObserver from "svelte-intersection-observer";
   import Common from "../../components/Content";
   import Item from "../../components/yatv/Content/Item.svelte";
-  import { Yatv } from "../../libs/api";
+  import { YatvProvider } from "../../libs/source/yatv.ts";
+  import type { List } from "../../libs/source/twitter.ts";
+  import type { SearchResultVideo } from "../../libs/api/yatv.ts";
+
+  const provider = new YatvProvider();
 
   let loading = true;
   let observed = false;
   let page = 1;
-  let videos: Yatv.SearchResultVideo[] = [];
+  let videos: List<SearchResultVideo>["videos"] = [];
   let element: HTMLDivElement;
 
   async function fetch(page: number) {
-    const data = await Yatv.getIndex(page);
-    videos = videos.concat(data);
+    const data = await provider.getVideoList(page);
+    videos = videos.concat(data.videos);
   }
 
   $: {
@@ -31,7 +35,7 @@
       {/each}
     {:else}
       {#each videos as video, i}
-        <Item videoInfo={video} />
+        <Item {provider} videoInfo={video} />
       {/each}
     {/if}
     <IntersectionObserver

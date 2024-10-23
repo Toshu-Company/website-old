@@ -1,22 +1,44 @@
 <script lang="ts">
   import HeartIcon from "../../../assets/heart.svg";
   import HeartFillIcon from "../../../assets/heart-fill.svg";
-  import { favorite } from "../../../store/yatv/favorite";
+  import type { VirtualProvider } from "../../../libs/source/twitter";
+  import { Yatv } from "../../../libs/api";
 
-  export let id: string;
+  export let info: Yatv.SearchResultVideo;
+  export let provider: VirtualProvider<Yatv.SearchResultVideo>;
 
-  function toggle() {
-    if ($favorite.includes(id)) {
-      favorite.set($favorite.filter((x) => x !== id));
+  const { favorite: store } = provider;
+  const favorite = store.use("svelte");
+
+  let favorited = false;
+
+  $: (async () => {
+    favorited = await (store.Type === "object"
+      ? store.includes(info)
+      : store.includes(info.id));
+  })(),
+    [$favorite];
+
+  async function toggle() {
+    if (store.Type === "object") {
+      if (await store.includes(info)) {
+        await store.remove(info);
+      } else {
+        await store.add(info);
+      }
     } else {
-      favorite.set($favorite.concat(id));
+      if (await store.includes(info.id)) {
+        await store.remove(info.id);
+      } else {
+        await store.add(info.id);
+      }
     }
   }
 </script>
 
 <button on:click={toggle}>
   <img
-    src={$favorite.includes(id) ? HeartFillIcon.src : HeartIcon.src}
+    src={favorited ? HeartFillIcon.src : HeartIcon.src}
     width="24"
     alt="Favorites"
   />

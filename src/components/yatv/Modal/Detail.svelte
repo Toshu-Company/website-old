@@ -6,13 +6,15 @@
   import { Yatv } from "../../../libs/api";
   import { MIRROR_URL } from "../../../libs/api/yatv";
   import Favorite from "../Content/Favorite.svelte";
+  import type { VirtualProvider } from "../../../libs/source/twitter";
 
   let videoRef: HTMLVideoElement;
 
   export let close: () => void;
   export let info: Yatv.SearchResultVideo;
+  export let provider: VirtualProvider<Yatv.SearchResultVideo>;
 
-  let detail: Yatv.VideoInfo | null = null;
+  let detail: Yatv.VideoDetailInfo | null = null;
 
   Yatv.getVideo(info.url).then((res) => {
     detail = res;
@@ -25,8 +27,6 @@
       const hls = new Hls({
         maxBufferLength: 60 * 2,
         xhrSetup(xhr, url) {
-          // const encoded = btoa(url);
-          // xhr.open("GET", `${MIRROR_URL}?url=${encoded}`, true);
           xhr.open("POST", Yatv.MIRROR_URL, true);
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.send(
@@ -64,7 +64,7 @@
         </h1>
       </a>
       <div class="menu">
-        <Favorite id={info.url} />
+        <Favorite {provider} {info} />
       </div>
     </div>
     <!-- <a href="/test" class="external-link">

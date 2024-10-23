@@ -6,11 +6,11 @@ import { $setting } from "../../../store/setting";
 import Loading from "../../../assets/loading.jpg";
 import type {
   TwitterVideo,
-  VirtualTwitter,
+  VirtualProvider,
 } from "../../../libs/source/twitter";
 
 type Props = {
-  provider: VirtualTwitter;
+  provider: VirtualProvider<TwitterVideo>;
   detail: TwitterVideo | Promise<TwitterVideo>;
   click?: () => void;
 };
