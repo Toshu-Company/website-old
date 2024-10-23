@@ -34,7 +34,7 @@
         <Common.Skeleton />
       {/each}
     {:else}
-      {#each videos as video, i}
+      {#each videos as video, i (video.id)}
         <Item {provider} videoInfo={video} />
       {/each}
     {/if}

@@ -25,8 +25,8 @@
 <div class="wrapper">
   <button on:click={() => migrate()}>Migrate</button>
   <Container>
-    {#each $favorite as v (v.id)}
-      <Item videoInfo={v} />
+    {#each $favorite as video (video.id)}
+      <Item {provider} videoInfo={video} />
     {/each}
   </Container>
 </div>

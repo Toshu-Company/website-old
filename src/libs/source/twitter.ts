@@ -313,6 +313,7 @@ export abstract class VirtualProvider<T> {
   ): Promise<List<string>>;
 
   abstract resolveVideo(url: string): Promise<string>;
+  abstract mirror(url: string): Promise<any>;
 }
 
 export class DefaultProvider<
@@ -344,5 +345,8 @@ export class DefaultProvider<
   }
   async resolveVideo(url: string): Promise<string> {
     return url;
+  }
+  mirror(url: string): Promise<any> {
+    throw new Error("Method not implemented.");
   }
 }

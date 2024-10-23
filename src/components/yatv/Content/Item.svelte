@@ -12,15 +12,25 @@
   let imageUrl: string;
 
   $: if (!videoInfo.thumbnail) {
-    Yatv.getVideo(videoInfo.url).then((res) => {
+    provider.getVideo(videoInfo.url).then((res) => {
       videoInfo.thumbnail = res.thumbnail ?? videoInfo.thumbnail;
     });
   } else if (!imageUrl) {
-    Yatv.mirror(videoInfo.thumbnail)
+    provider
+      .mirror(videoInfo.thumbnail)
       .then((res) => res.blob())
       .then((blob) => {
         imageUrl = URL.createObjectURL(blob);
       });
+  }
+
+  async function fetchThumbnail() {
+    let thumbnail =
+      videoInfo.thumbnail ?? (await provider.getVideo(videoInfo.url)).thumbnail;
+    return provider
+      .mirror(thumbnail)
+      .then((res) => res.blob())
+      .then((blob) => URL.createObjectURL(blob));
   }
 </script>
 
@@ -28,10 +38,12 @@
   <div class="image-wrapper">
     {#if $common.censored}
       <img src={Loading.src} alt="Loading" />
-    {:else if imageUrl}
-      <img src={imageUrl} alt="Thumbnail" />
     {:else}
-      <div class="gradient" />
+      {#await fetchThumbnail()}
+        <div class="gradient" />
+      {:then imageUrl}
+        <img src={imageUrl} alt="Thumbnail" />
+      {/await}
     {/if}
   </div>
   <div class="text-wrapper">
