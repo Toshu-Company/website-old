@@ -3,12 +3,12 @@ import {
   Twitter,
   type TwitterVideoList,
   type TwitterVideo,
-  LazyIndexedDBStore,
+  IndexedDBStore,
   CacheStore,
 } from "./twitter";
 
 export class TwiVideoNetProvider extends Twitter {
-  public readonly favorite = new LazyIndexedDBStore("twivideo");
+  public readonly favorite = new IndexedDBStore("twivideo");
   private readonly cache = new CacheStore("twivideo");
   perPage = 45;
 
