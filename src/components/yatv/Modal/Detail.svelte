@@ -58,15 +58,18 @@
       <track kind="captions" />
     </video>
     <div class="top-row">
+      <a href="/test" class="external-link">
+        <h1 class="title">
+          {$common.censored ? "Good Picture 👍" : (info.title ?? "\u00a0")}
+        </h1>
+      </a>
       <div class="menu">
         <Favorite id={info.url} />
       </div>
     </div>
-    <a href="/test" class="external-link">
-      <h2 class="title">
-        {$common.censored ? "Good Picture 👍" : info.title ?? "\u00a0"}
-      </h2>
-    </a>
+    <!-- <a href="/test" class="external-link">
+      <h2 class="user">@any_user</h2>
+    </a> -->
   </div>
 </Default>
 
@@ -98,6 +101,12 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
   }
 
   h2 {

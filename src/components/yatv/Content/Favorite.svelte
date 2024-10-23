@@ -17,6 +17,7 @@
 <button on:click={toggle}>
   <img
     src={$favorite.includes(id) ? HeartFillIcon.src : HeartIcon.src}
+    width="24"
     alt="Favorites"
   />
 </button>
@@ -26,5 +27,11 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+  }
+
+  img {
+    @media screen and (max-width: 768px) {
+      width: 20px;
+    }
   }
 </style>
