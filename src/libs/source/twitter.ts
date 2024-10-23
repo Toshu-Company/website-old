@@ -51,11 +51,15 @@ export class PersistentStore extends VirtualFavoriteStore<string, "string"> {
 
   constructor(
     key: string,
+    parent: string | null = "twitter",
     private readonly compare: (a: string, b: string) => boolean = (a, b) =>
       a === b
   ) {
     super();
-    this.$rawFavorite = persistentAtom<string>(`twitter:${key}:favorite`, "[]");
+    this.$rawFavorite = persistentAtom<string>(
+      [parent, key, "favorite"].filter(Boolean).join(":"),
+      "[]"
+    );
     this.$favorite = atom<string[]>(JSON.parse(this.$rawFavorite.get()));
 
     this.$favorite.listen((value) => {
