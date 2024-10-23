@@ -1,8 +1,8 @@
 import { persistentAtom } from "@nanostores/persistent";
 import { useStore } from "@nanostores/react";
 import { atom, type WritableAtom } from "nanostores";
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { readable, writable } from "svelte/store";
+import { useSyncExternalStore } from "react";
+import { readable } from "svelte/store";
 
 export interface TwitterOptions {}
 
@@ -23,12 +23,17 @@ export interface List<T> {
   count: number;
 }
 
+export type Subscribable<T> = {
+  subscribe: (subscription: (value: Readonly<T>) => void) => () => void;
+};
+
 export interface TwitterVideoList extends List<TwitterVideo> {}
 
 export abstract class VirtualFavoriteStore<T, K extends "string" | "object"> {
   public Type!: K;
 
-  abstract use(type: "react" | "svelte"): any;
+  abstract use(type: "react"): T[];
+  abstract use(type: "svelte"): Subscribable<T[]>;
 
   abstract includes(id: T): boolean | Promise<boolean>;
 
@@ -58,9 +63,14 @@ export class PersistentStore extends VirtualFavoriteStore<string, "string"> {
     });
   }
 
-  override use(type: "react") {
+  use(type: "react"): string[];
+  use(type: "svelte"): Subscribable<string[]>;
+  use(type: "react" | "svelte"): string[] | Subscribable<string[]> {
     if (type === "react") {
       return useStore(this.$favorite);
+    }
+    if (type === "svelte") {
+      return this.$favorite;
     }
     return this.$favorite.get();
   }
@@ -159,7 +169,9 @@ export class IndexedDBStore<
     }, 1000);
   }
 
-  override use(type: "react" | "svelte") {
+  override use(type: "react"): T[];
+  override use(type: "svelte"): Subscribable<T[]>;
+  override use(type: "react" | "svelte"): T[] | Subscribable<T[]> {
     if (type === "react") {
       return useSyncExternalStore(
         (onStoreChange: () => void) => {
