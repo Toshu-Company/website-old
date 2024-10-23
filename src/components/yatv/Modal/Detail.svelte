@@ -7,6 +7,7 @@
   import { MIRROR_URL } from "../../../libs/api/yatv";
   import Favorite from "../Content/Favorite.svelte";
   import type { VirtualProvider } from "../../../libs/source/twitter";
+  import { onDestroy } from "svelte";
 
   let videoRef: HTMLVideoElement;
 
@@ -45,6 +46,14 @@
         "https://file-examples.com/storage/fe7e31ec4b64ff77da87142/2017/04/file_example_MP4_480_1_5MG.mp4";
     }
   }
+
+  onDestroy(() => {
+    if (videoRef) {
+      videoRef.pause();
+      videoRef.removeAttribute("src");
+      videoRef.load();
+    }
+  });
 </script>
 
 <Default maxWidth={1200} {close}>
