@@ -32,7 +32,6 @@ export default function Item(props: Props) {
   }, [props.detail]);
 
   useEffect(() => {
-    console.log(detail);
     if (detail?.thumbnail) {
       cachingThumbnail(detail.thumbnail).then((blob) => {
         setThumbnail(URL.createObjectURL(blob));

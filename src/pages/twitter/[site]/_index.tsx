@@ -11,7 +11,7 @@ interface Props {
 
 export default function Index(props: Props) {
   const provider = useMemo(() => new Providers[props.provider](), []);
-  const [search, setSearch] = useState<string>("");
+  const search = new URLSearchParams(window.location.search).get("search") ?? "";
 
   const [videos, setVideos] = useState<List<TwitterVideo>["videos"]>([]);
   const [page, setPage] = useState<number>(1);
@@ -26,32 +26,19 @@ export default function Index(props: Props) {
     async (
       search: string | null,
       page: number,
-      videos: List<TwitterVideo>["videos"]
-    ) =>
-      new Promise((resolve) => {
-        if (search) {
-          provider
-            .searchVideoList(search, page)
-            .then((res) => {
-              setVideos(videos.concat(res.videos));
-              resolve(videos.concat(res.videos));
-            })
-            .catch((err) => {
-              alert(err);
-            });
-        } else {
-          provider.getVideoList(page).then((res) => {
-            setVideos(videos.concat(res.videos));
-            resolve(videos.concat(res.videos));
-          });
-        }
-      }),
+    ) => {
+      if (search) {
+        const data = await provider.searchVideoList(search, page);
+        setVideos((videos) => videos.concat(data.videos));
+      } else {
+        const data = await provider.getVideoList(page);
+        setVideos((videos) => videos.concat(data.videos));
+      }
+    },
     []
   );
 
   const target = useRef(null);
-  const prevSearch = useRef<string | null>(null);
-  const loading = useRef<boolean>(true);
 
   useEffect(() => {
     const targetNode = target.current;
@@ -62,36 +49,20 @@ export default function Index(props: Props) {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setSearch(params.get("search") ?? "");
-  }, []);
-
-  useEffect(() => {
-    if (prevSearch.current !== search) {
-      setPage(1);
-      prevSearch.current = search;
-      fetch(search, 1, []).then(() => {
-        console.log("fetch");
-        loading.current = false;
-      });
-    } else {
-      fetch(search, page, videos).then(() => {
-        console.log("fetch");
-        loading.current = false;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search]);
+    fetch(search, page).then(() => {
+      console.log("fetch");
+    });
+  }, [page]);
 
   return (
     <>
       <Wrapper>
         <Content.Container>
-          {loading.current
+          {videos.length === 0
             ? [...Array(20)].map((_, i) => <Content.Skeleton key={i} />)
             : videos.map((v, i) => (
-                <Content.Item provider={provider} key={i} detail={v} />
-              ))}
+              <Content.Item provider={provider} key={i} detail={v} />
+            ))}
           <Intersection
             id="intersection"
             ref={target}
