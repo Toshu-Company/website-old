@@ -1,26 +1,29 @@
 <script lang="ts">
-  import { setting as common } from "../../store/setting";
   import Common from "../../components/Content";
-  import Loading from "../../assets/loading.jpg";
   import Thumbnail from "./_thumbnail.svelte";
+  import { onMount } from "svelte";
+
+  let thumbnails: Awaited<ReturnType<typeof getThumbnails>> = [];
 
   async function getThumbnails() {
     const cache = await caches.open("thumbnail");
     return await cache.keys();
   }
+
+  onMount(() => {
+    setInterval(async () => {
+      thumbnails = await getThumbnails();
+    }, 1000 * 5);
+  });
 </script>
 
 <div class="wrapper">
   <Common.Container>
-    {#await getThumbnails() then thumbnails}
-      {#if thumbnails.length > 0}
-        {#each thumbnails as thumbnail}
-          <Thumbnail src={thumbnail.url} />
-        {/each}
-      {:else}
-        <p>No thumbnails found</p>
-      {/if}
-    {/await}
+    {#if thumbnails.length > 0}
+      {#each thumbnails as thumbnail (thumbnail.url)}
+        <Thumbnail src={thumbnail.url} />
+      {/each}
+    {/if}
   </Common.Container>
 </div>
 
