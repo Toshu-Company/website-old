@@ -61,18 +61,17 @@ export const MIRROR_URL = `${
   import.meta.env.PUBLIC_TWITTER_API_URL
 }/yatv/mirror`;
 export async function mirror(url: string) {
-  console.log("mirror", url);
-  // const encoded = btoa(url);
-  // const data = await fetch(`${MIRROR_URL}?url=${encoded}`);
-  // return data;
-  const data = await fetch(MIRROR_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ url }),
-  });
+  const encoded = btoa(url);
+  const data = await fetch(`${MIRROR_URL}?url=${encoded}`);
   return data;
+  // const data = await fetch(MIRROR_URL, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({ url }),
+  // });
+  // return data;
 }
 
 export interface Video {
