@@ -67,7 +67,11 @@
       <track kind="captions" />
     </video>
     <div class="top-row">
-      <a href="/test" class="external-link">
+      <a
+        href={`https://yatv1.com${info.url}`}
+        class="external-link"
+        target="_blank"
+      >
         <h1 class="title">
           {$common.censored ? "Good Picture 👍" : (info.title ?? "\u00a0")}
         </h1>
