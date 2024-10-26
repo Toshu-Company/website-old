@@ -1,5 +1,6 @@
 <script lang="ts">
   import { setting as common } from "../../store/setting";
+  import { longpress } from "../../scripts/longpress";
   import Loading from "../../assets/loading.jpg";
   import Default from "../../components/Modal/Default.svelte";
 
@@ -19,10 +20,23 @@
     visible = false;
     return null;
   }
+
+  function onLongPress(e: TouchEvent) {
+    const res = confirm("Do you want to delete this thumbnail?");
+    if (res) {
+      caches.open("thumbnail").then((cache) => cache.delete(src));
+      visible = false;
+    }
+  }
 </script>
 
 {#if visible}
-  <button class="wrapper" on:click={() => (modal = true)}>
+  <button
+    class="wrapper"
+    on:click={() => (modal = true)}
+    use:longpress
+    on:longpress={onLongPress}
+  >
     <div class="image-wrapper">
       {#if $common.censored}
         <img src={Loading.src} alt="Loading" />
