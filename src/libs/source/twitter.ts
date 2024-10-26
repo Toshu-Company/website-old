@@ -147,8 +147,15 @@ export class IndexedDBStore<
         cache.push(cursor.value);
         cursor.continue();
       } else {
-        this._cache = cache;
-        this._change();
+        if (cache.length === 0) {
+          console.log("Empty cache. Something went wrong.");
+          console.log(this._cache, cache);
+          // @ts-ignore
+          window.cache = this._cache;
+        } else {
+          this._cache = cache;
+          this._change();
+        }
       }
     };
   }
