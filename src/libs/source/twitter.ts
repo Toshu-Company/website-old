@@ -171,7 +171,7 @@ export class IndexedDBStore<
 
     this._timer = setInterval(() => {
       this._sync();
-    }, 1000 * 60);
+    }, 1000 * 5);
   }
 
   override use(type: "react"): T[];
@@ -346,6 +346,7 @@ export class DefaultProvider<
     return url;
   }
   mirror(url: string): Promise<any> {
-    throw new Error("Method not implemented.");
+    return fetch(url).then((res) => res.blob());
+    // throw new Error("Method not implemented.");
   }
 }

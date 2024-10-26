@@ -8,6 +8,8 @@ import type {
   TwitterVideo,
   VirtualProvider,
 } from "../../../libs/source/twitter";
+import { useStore } from "@nanostores/react";
+import { cachingThumbnail } from "../../../scripts/cache";
 
 type Props = {
   provider: VirtualProvider<TwitterVideo>;
@@ -16,15 +18,10 @@ type Props = {
 };
 
 export default function Item(props: Props) {
+  const { censored } = useStore($setting);
   const [detail, setDetail] = useState<TwitterVideo>();
   const [modal, setModal] = useState<boolean>(false);
-  const [censored, setCensored] = useState<boolean>($setting.get().censored);
-
-  useEffect(() => {
-    $setting.listen((setting) => {
-      setCensored(setting.censored);
-    });
-  }, []);
+  const [thumbnail, setThumbnail] = useState<string>();
 
   useEffect(() => {
     if (props.detail instanceof Promise) {
@@ -34,14 +31,23 @@ export default function Item(props: Props) {
     }
   }, [props.detail]);
 
+  useEffect(() => {
+    console.log(detail);
+    if (detail?.thumbnail) {
+      cachingThumbnail(detail.thumbnail).then((blob) => {
+        setThumbnail(URL.createObjectURL(blob));
+      });
+    }
+  }, [detail?.thumbnail]);
+
   return (
     <>
       <Wrapper onClick={() => setModal(true)}>
         <ImageWrapper>
           {censored ? (
             <RoundedImage src={Loading.src} fill alt={"article"} />
-          ) : detail ? (
-            <RoundedImage src={detail.thumbnail} fill alt={"article"} />
+          ) : thumbnail ? (
+            <RoundedImage src={thumbnail} fill alt={"article"} />
           ) : (
             <Gradient />
           )}
