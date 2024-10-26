@@ -36,12 +36,16 @@ async function fetchAPI(url: string, prop: Props = {}) {
 }
 
 export async function getVideo(url: string): Promise<VideoDetailInfo> {
+  // const data = await fetchAPI(
+  //   `${import.meta.env.PUBLIC_TWITTER_API_URL}/yatv/detail`,
+  //   {
+  //     method: "POST",
+  //     body: { url },
+  //   }
+  // );
+  const encoded = btoa(url);
   const data = await fetchAPI(
-    `${import.meta.env.PUBLIC_TWITTER_API_URL}/yatv/detail`,
-    {
-      method: "POST",
-      body: { url },
-    }
+    `${import.meta.env.PUBLIC_TWITTER_API_URL}/yatv/detail?url=${encoded}`
   );
   return data;
 }

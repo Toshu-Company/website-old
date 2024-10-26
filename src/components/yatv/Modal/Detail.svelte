@@ -28,14 +28,16 @@
       const hls = new Hls({
         maxBufferLength: 60 * 2,
         xhrSetup(xhr, url) {
-          xhr.open("POST", Yatv.MIRROR_URL, true);
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.send(
-            JSON.stringify({
-              url,
-            })
-          );
-          xhr.send = () => {};
+          const encoded = btoa(url);
+          xhr.open("GET", `${MIRROR_URL}?url=${encoded}`, true);
+          // xhr.open("POST", Yatv.MIRROR_URL, true);
+          // xhr.setRequestHeader("Content-Type", "application/json");
+          // xhr.send(
+          //   JSON.stringify({
+          //     url,
+          //   })
+          // );
+          // xhr.send = () => {};
         },
       });
       hls.loadSource(detail.video);
