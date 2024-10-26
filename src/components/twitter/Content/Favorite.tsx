@@ -4,7 +4,7 @@ import Image from "../../Image";
 import HeartIcon from "../../../assets/heart.svg";
 import HeartFillIcon from "../../../assets/heart-fill.svg";
 import type { TwitterVideo, VirtualProvider } from "../../../libs/source/twitter";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
   provider: VirtualProvider<TwitterVideo>;
@@ -13,39 +13,31 @@ type Props = {
 
 export default function Favorite(props: Props) {
   const { provider, detail } = props;
-  const { favorite } = provider;
-  favorite.use('react');
+  const { favorite: store } = provider;
+  const favorites = store.use('react');
 
-  const [favorited, setFavorited] = useState<boolean>();
-
-  useEffect(() => {
-    const fetchFavoriteStatus = async () => {
-      if (favorite.Type === "object") {
-        const result = await favorite.includes(detail);
-        setFavorited(result);
-      } else {
-        const result = await favorite.includes(detail.id);
-        setFavorited(result);
-      }
-    };
-
-    fetchFavoriteStatus();
-  });
+  const favorited = useMemo(() => {
+    if (store.Type === "object") {
+      return (favorites as TwitterVideo[]).some((v) => v.id === detail.id);
+    } else {
+      return (favorites as string[]).includes(detail.id);
+    }
+  }, [favorites]);
 
   return (
     <ImageButton
-      onClick={async () => {
-        if (favorite.Type === "object") {
-          if (await favorite.includes(detail)) {
-            await favorite.remove(detail);
+      onClick={() => {
+        if (store.Type === "object") {
+          if (store.includes(detail)) {
+            store.remove(detail);
           } else {
-            await favorite.add(detail);
+            store.add(detail);
           }
         } else {
-          if (await favorite.includes(detail.id)) {
-            await favorite.remove(detail.id);
+          if (store.includes(detail.id)) {
+            store.remove(detail.id);
           } else {
-            await favorite.add(detail.id);
+            store.add(detail.id);
           }
         }
       }}

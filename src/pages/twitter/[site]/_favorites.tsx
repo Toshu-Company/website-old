@@ -10,7 +10,7 @@ interface Props {
 
 export default function Index(props: Props) {
   const provider = useMemo(() => new Providers[props.provider](), []);
-  const favorite = provider.favorite.use("react");
+  const favorites = provider.favorite.use("react");
 
   const migrate = async () => {
     const old = new PersistentStore("twivideo");
@@ -28,7 +28,7 @@ export default function Index(props: Props) {
       <Wrapper>
         <button onClick={() => migrate()}>Migrate</button>
         <Content.Container>
-          {favorite.map((v, i) => (
+          {favorites.map((v, i) => (
             <Content.Item
               provider={provider}
               key={typeof v === "string" ? v : v.id}

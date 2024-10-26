@@ -103,6 +103,10 @@
       if (key.startsWith("cache:")) localStorage.removeItem(key);
     }
 
+    caches.keys().then((keys) => {
+      keys.forEach((key) => caches.delete(key));
+    });
+
     location.reload();
   }
 

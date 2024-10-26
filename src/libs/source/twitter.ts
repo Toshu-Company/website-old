@@ -35,11 +35,11 @@ export abstract class VirtualFavoriteStore<T, K extends "string" | "object"> {
   abstract use(type: "react"): T[];
   abstract use(type: "svelte"): Subscribable<T[]>;
 
-  abstract includes(id: T): boolean | Promise<boolean>;
+  abstract includes(id: T): boolean;
 
-  abstract add(id: T): void | Promise<void>;
+  abstract add(id: T): void;
 
-  abstract remove(id: T): void | Promise<void>;
+  abstract remove(id: T): void;
 
   abstract import(data: T[]): void | Promise<void>;
   abstract export(): T[] | Promise<T[]>;
@@ -166,11 +166,12 @@ export class IndexedDBStore<
     };
     request.onsuccess = () => {
       this.db = request.result;
+      this._sync();
     };
 
     this._timer = setInterval(() => {
       this._sync();
-    }, 1000);
+    }, 1000 * 60);
   }
 
   override use(type: "react"): T[];
@@ -192,14 +193,12 @@ export class IndexedDBStore<
     }
     if (type === "svelte") {
       return readable(this._cache, (set) => {
-        this._event.addEventListener("change", () => {
-          set(this._cache);
-        });
+        const setCache = () => set(this._cache);
+
+        this._event.addEventListener("change", setCache);
 
         return () => {
-          this._event.removeEventListener("change", () => {
-            set(this._cache);
-          });
+          this._event.removeEventListener("change", setCache);
         };
       });
     }
@@ -216,7 +215,7 @@ export class IndexedDBStore<
       video,
       date: new Date(),
     });
-    this._cache.push(video);
+    this._cache = this._cache.concat(video);
     this._change();
   }
 
