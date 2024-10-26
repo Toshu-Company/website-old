@@ -11,9 +11,11 @@
   }
 
   onMount(() => {
-    setInterval(async () => {
+    const timer = setInterval(async () => {
       thumbnails = await getThumbnails();
     }, 1000 * 5);
+
+    return () => clearInterval(timer);
   });
 </script>
 
