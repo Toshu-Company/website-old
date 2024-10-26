@@ -18,7 +18,7 @@ type Props = {
 };
 
 export default function Item(props: Props) {
-  const { censored } = useStore($setting);
+  const { censored, nocache } = useStore($setting);
   const [detail, setDetail] = useState<TwitterVideo>();
   const [modal, setModal] = useState<boolean>(false);
   const [thumbnail, setThumbnail] = useState<string>();
@@ -32,7 +32,7 @@ export default function Item(props: Props) {
   }, [props.detail]);
 
   useEffect(() => {
-    if (detail?.thumbnail) {
+    if (detail?.thumbnail && !nocache) {
       cachingThumbnail(detail.thumbnail).then((blob) => {
         setThumbnail(URL.createObjectURL(blob));
       });
