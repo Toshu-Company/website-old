@@ -11,6 +11,8 @@
   }
 
   onMount(() => {
+    getThumbnails().then((res) => (thumbnails = res));
+
     const timer = setInterval(async () => {
       thumbnails = await getThumbnails();
     }, 1000 * 5);
