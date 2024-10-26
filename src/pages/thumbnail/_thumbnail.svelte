@@ -125,6 +125,7 @@
       margin-left: auto;
       margin-right: auto;
       max-height: calc(100vh - 140px);
+      max-width: 100%;
     }
   }
 
