@@ -1,0 +1,12 @@
+---
+import Container from "../../components/Container.astro";
+import Layout from "../../layouts/lover/Layout.astro";
+import Content from "./_index.svelte";
+
+export const prerender = true;
+---
+
+<Layout title="Welcome to Thumbnails." />
+<Container>
+  <Content client:only="svelte" />
+</Container>

@@ -51,6 +51,8 @@
     border-radius: 10px;
     background-color: #1a1a1a;
 
+    display: flex;
+
     animation: animation 0.2s ease-in-out;
   }
 </style>

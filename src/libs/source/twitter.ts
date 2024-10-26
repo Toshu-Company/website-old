@@ -345,8 +345,9 @@ export class DefaultProvider<
   async resolveVideo(url: string): Promise<string> {
     return url;
   }
-  mirror(url: string): Promise<any> {
-    return fetch(url).then((res) => res.blob());
+  async mirror(url: string): Promise<any> {
+    const res = await fetch(url);
+    return await res.blob();
     // throw new Error("Method not implemented.");
   }
 }
