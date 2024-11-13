@@ -10,6 +10,19 @@
     return await cache.keys();
   }
 
+  async function getDates() {
+    const cache = await caches.open("thumbnail");
+    const dates = (await cache.matchAll()).map((res) =>
+      res.headers.has("Cached-Date")
+        ? new Date(res.headers.get("Cached-Date")!)
+        : null
+    );
+    const sorted = dates
+      .filter((date) => date !== null)
+      .sort((a, b) => a!.getTime() - b!.getTime());
+    return [sorted[0], sorted[sorted.length - 1]];
+  }
+
   onMount(() => {
     getThumbnails().then((res) => (thumbnails = res));
 
@@ -28,6 +41,13 @@
         <h1>
           Total: {thumbnails.length}
         </h1>
+        {#await getDates() then dates}
+          {#if dates[0]}
+            <p>
+              {dates[0]?.toLocaleString()} ~ {dates[1]?.toLocaleString()}
+            </p>
+          {/if}
+        {/await}
       </div>
 
       {#each thumbnails as thumbnail (thumbnail.url)}

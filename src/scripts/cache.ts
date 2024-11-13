@@ -5,7 +5,11 @@ export async function cachingThumbnail(url: string) {
     return response.blob();
   }
   return fetch(url).then((res) => {
-    cache.put(url, res.clone());
+    const response = res.clone();
+    const headers = new Headers(response.headers);
+    headers.set("Cached-Date", new Date().toUTCString());
+    console.log(headers);
+    cache.put(url, new Response(response.body, { headers }));
     return res.blob();
   });
 }
