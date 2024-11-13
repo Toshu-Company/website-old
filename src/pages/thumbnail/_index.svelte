@@ -24,6 +24,12 @@
 <div class="wrapper">
   <Common.Container>
     {#if thumbnails.length > 0}
+      <div style="width: 100%;">
+        <h1>
+          Total: {thumbnails.length}
+        </h1>
+      </div>
+
       {#each thumbnails as thumbnail (thumbnail.url)}
         <Thumbnail src={thumbnail.url} />
       {/each}
