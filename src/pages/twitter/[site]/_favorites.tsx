@@ -47,19 +47,19 @@ export default function Index(props: Props) {
   return (
     <>
       <Wrapper>
-        <div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button onClick={() => migrate()}>Migrate</button>
           <button onClick={() => _export()}>Export</button>
           <button onClick={() => document.getElementById("file")?.click()}>
             Import
           </button>
-          <input
-            id="file"
-            type="file"
-            style={{ display: "none" }}
-            onChange={(e) => _import(e.target.files![0])}
-          />
         </div>
+        <input
+          id="file"
+          type="file"
+          style={{ display: "none" }}
+          onChange={(e) => _import(e.target.files![0])}
+        />
         <Content.Container>
           {favorites.map((v, i) => (
             <Content.Item

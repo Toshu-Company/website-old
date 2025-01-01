@@ -245,8 +245,8 @@ export class IndexedDBStore<
           return console.log("Duplicated", value);
         imported.push(value);
         objectStore.add({
-          ...value,
           date: new Date(start.getTime() + imported.length),
+          ...value,
         }).onsuccess = () => {
           console.log(`Imported: ${value.id}`);
         };
