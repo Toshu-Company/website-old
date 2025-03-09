@@ -80,20 +80,14 @@ const Wrapper = styled.div`
   height: 100%;
 
   display: flex;
-  flex-wrap: wrap;
   flex-direction: column;
   gap: 10px;
 `;
 
 const Video = styled.video`
-  flex: 1;
-  flex-grow: 1;
-  flex-shrink: 1;
-  min-width: 0;
-  min-height: 0;
-  max-width: 100%;
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 16 / 9;
 `;
 
 const TopRow = styled.div`
