@@ -10,16 +10,17 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^7.0.1",
-    "@astrojs/react": "^3.0.7",
-    "@astrojs/svelte": "^5.0.1",
-    "@astrojs/vercel": "^6.1.0",
+    "@astrojs/node": "^8.3.4",
+    "@astrojs/react": "^3.6.3",
+    "@astrojs/svelte": "^6.0.2",
+    "@astrojs/vercel": "^7.8.2",
     "@ffmpeg/ffmpeg": "0.12.8",
     "@ffmpeg/util": "^0.12.1",
     "@nanostores/persistent": "^0.9.1",
     "@nanostores/react": "^0.7.1",
-    "astro": "^4.0.6",
+    "astro": "^4.16.16",
     "astro-compress": "^2.2.5",
+    "firebase": "^11.0.2",
     "hls.js": "^1.4.13",
     "nanostores": "^0.9.5",
     "react": "^18.0.0",
@@ -27,7 +28,7 @@
     "sass": "^1.69.5",
     "sharp": "^0.33.1",
     "styled-components": "^6.1.1",
-    "svelte": "^4.2.8",
+    "svelte": "^5.2.12",
     "svelte-intersection-observer": "^0.10.1"
   },
   "devDependencies": {

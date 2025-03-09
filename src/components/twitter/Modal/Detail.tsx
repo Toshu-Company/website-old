@@ -67,9 +67,7 @@ export default function Detail({ close, detail, provider }: Props) {
             </Menu>
           </TopRow>
           <ExternalLink href={`/twitter/user?user=${detail.user_id}`}>
-            <User>
-              @{detail.user}
-            </User>
+            <User>@{detail.user}</User>
           </ExternalLink>
         </Wrapper>
       </Modal.Default>
@@ -82,14 +80,20 @@ const Wrapper = styled.div`
   height: 100%;
 
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   gap: 10px;
 `;
 
 const Video = styled.video`
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 16 / 9;
+  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  width: inherit;
+  height: inherit;
 `;
 
 const TopRow = styled.div`

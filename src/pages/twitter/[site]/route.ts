@@ -6,6 +6,7 @@ export function getStaticPaths() {
   return [
     { params: { site: "twivideos" } },
     { params: { site: "twivideo" } },
+    { params: { site: "twidouga" } },
     { params: { site: "uraakalist" } },
   ];
 }
@@ -16,6 +17,8 @@ export function getProvider(site: string): keyof typeof Providers | undefined {
       return "TwiVideosNetProvider";
     case "twivideo":
       return "TwiVideoNetProvider";
+    case "twidouga":
+      return "TwiDougaNetProvider";
     case "uraakalist":
       return "UraakaListComProvider";
     default:

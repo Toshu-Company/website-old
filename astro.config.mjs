@@ -1,9 +1,9 @@
 import { defineConfig, sharpImageService } from "astro/config";
 import react from "@astrojs/react";
 import compress from "astro-compress";
-import svelte from "@astrojs/svelte";
-import vercel from '@astrojs/vercel/serverless';
-import node from '@astrojs/node';
+import svelte, { vitePreprocess } from "@astrojs/svelte";
+import vercel from "@astrojs/vercel/serverless";
+import node from "@astrojs/node";
 const isDev = process.env.NODE_ENV === "development";
 
 // https://astro.build/config
@@ -11,6 +11,7 @@ export default defineConfig({
   image: {
     service: sharpImageService(),
   },
+  preprocess: vitePreprocess(),
   vite: {
     optimizeDeps: {
       exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
@@ -25,12 +26,12 @@ export default defineConfig({
       HTML: false,
     }),
   ],
-  output: 'server',
+  output: "server",
   adapter: vercel({
     analytics: true,
     functionPerRoute: false,
   }),
   // adapter: node({
-  //   mode: 'standalone',
+  //   mode: "standalone",
   // }),
 });
